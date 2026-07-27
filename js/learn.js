@@ -95,22 +95,18 @@
   const elHdrTotal  = $("#hdr-total");
   const elChooseLabel = $("#learn-choose-label");
 
-  /* ── BUILD DISTRACTORS ── */
+  /* ── BUILD OPTIONS ── */
   /**
-   * Tạo 4 lựa chọn: 1 đúng + 3 sai ngẫu nhiên từ các câu khác.
+   * Dùng đúng 4 đáp án A/B/C/D gốc của câu hỏi, chỉ xáo trộn thứ tự hiển thị.
    * Trả về mảng { text, isCorrect }
    */
   const buildOptions = (q) => {
     const correctText = q.options.find((o) => o.key === q.correctAnswer).text;
-    // Pool: đáp án đúng từ các câu khác
-    const pool = allQuestions
-      .filter((other) => other.id !== q.id)
-      .map((other) => other.options.find((o) => o.key === other.correctAnswer).text);
-    const distractors = shuffle(pool).slice(0, DISTRACTORS);
-    return shuffle([
-      { text: correctText, isCorrect: true },
-      ...distractors.map((text) => ({ text, isCorrect: false }))
-    ]);
+    const opts = q.options.map((o) => ({
+      text: o.text,
+      isCorrect: o.text === correctText
+    }));
+    return shuffle(opts);
   };
 
   /* ── RENDER ── */
