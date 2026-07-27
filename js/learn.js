@@ -37,6 +37,11 @@
     try {
       const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (s && Array.isArray(s.queue) && s.queue.length) {
+        // Tự động reset nếu người dùng trước đó đã học hết và không còn câu sai nào
+        if ((s.qIndex >= s.queue.length - 1 || s.isCompleted) && (!s.wrongIds || s.wrongIds.length === 0)) {
+          startFreshRound();
+          return;
+        }
         queue    = s.queue;
         qIndex   = Math.min(s.qIndex || 0, queue.length - 1);
         round    = s.round || 1;
@@ -281,6 +286,8 @@
         renderQuestion();
       });
     } else {
+      // Tự động reset tiến trình đã học xong hoàn chỉnh để lần vào tiếp theo bắt đầu lại từ đầu
+      localStorage.removeItem(STORAGE_KEY);
       actions.innerHTML = `
         <a class="btn btn-secondary" href="index.html">⌂ Trang chủ</a>
         <button class="btn btn-primary" id="lc-restart" type="button">↺ Học lại từ đầu</button>
@@ -328,6 +335,49 @@
     if (e.target === elModal) {
       elModal.hidden = true;
       document.body.style.overflow = "";
+    }
+  });
+
+  // Nút Trộn câu hỏi (Xáo trộn các câu chưa làm)
+  document.querySelector("#btn-shuffle")?.addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = "<span>✓ Đã trộn!</span>";
+    btn.style.color = "var(--success)";
+    btn.style.borderColor = "var(--success)";
+    setTimeout(() => {
+      btn.innerHTML = originalHtml;
+      btn.style.color = "";
+      btn.style.borderColor = "";
+    }, 1200);
+
+    if (queue.length - qIndex <= 1) {
+      queue = shuffle(queue);
+      qIndex = 0;
+    } else {
+      const past = queue.slice(0, qIndex);
+      const remaining = shuffle(queue.slice(qIndex));
+      queue = [...past, ...remaining];
+    }
+    saveState();
+    elCard.classList.remove("entering");
+    elCard.classList.add("leaving");
+    setTimeout(() => {
+      elCard.classList.remove("leaving");
+      renderQuestion();
+    }, 290);
+  });
+
+  // Nút Reset (Học lại từ đầu)
+  document.querySelector("#btn-reset")?.addEventListener("click", () => {
+    if (window.confirm("Bạn có chắc chắn muốn đặt lại toàn bộ tiến trình học từ đầu không?")) {
+      elCard.classList.remove("entering");
+      elCard.classList.add("leaving");
+      setTimeout(() => {
+        elCard.classList.remove("leaving");
+        startFreshRound();
+        renderQuestion();
+      }, 290);
     }
   });
 
