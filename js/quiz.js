@@ -67,10 +67,10 @@
       elements.answers.innerHTML = question.options.map((option) => {
         const selected = state.answers[state.currentIndex] === option.key;
         return `
-          <button class="answer-option${selected ? " selected" : ""}" type="button" data-key="${option.key}" aria-pressed="${selected}">
+          <div class="answer-option${selected ? " selected" : ""}" role="button" tabindex="0" data-key="${option.key}" aria-pressed="${selected}">
             <span class="answer-key">${option.key}</span>
             <span class="answer-text">${escapeHtml(option.text)}</span>
-          </button>`;
+          </div>`;
       }).join("");
 
       elements.prev.disabled = state.currentIndex === 0;
@@ -158,11 +158,26 @@
   };
 
   elements.answers.addEventListener("click", (event) => {
+    // Không kích hoạt chọn đáp án khi bôi đen (highlight) text để dịch hoặc copy
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) return;
+
     const option = event.target.closest(".answer-option");
     if (!option) return;
     state.answers[state.currentIndex] = option.dataset.key;
     saveState();
     renderQuestion();
+  });
+  elements.answers.addEventListener("keydown", (event) => {
+    if (["Enter", " "].includes(event.key)) {
+      const option = event.target.closest(".answer-option");
+      if (option) {
+        event.preventDefault();
+        state.answers[state.currentIndex] = option.dataset.key;
+        saveState();
+        renderQuestion();
+      }
+    }
   });
   elements.prev.addEventListener("click", () => goToQuestion(state.currentIndex - 1));
   elements.next.addEventListener("click", () => {

@@ -115,7 +115,11 @@
     if (state.current === state.order.length - 1 && state.order.length === 1) showComplete();
   };
 
-  elements.card.addEventListener("click", () => flipCard());
+  elements.card.addEventListener("click", () => {
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) return;
+    flipCard();
+  });
   elements.prev.addEventListener("click", () => move(-1));
   elements.next.addEventListener("click", () => move(1));
   document.querySelector("#remembered").addEventListener("click", () => markCurrent(true));

@@ -203,11 +203,11 @@
 
     // Options
     elOptions.innerHTML = opts.map((opt, i) => `
-      <button class="learn-option" type="button" data-correct="${opt.isCorrect}" aria-pressed="false">
+      <div class="learn-option" role="button" tabindex="0" data-correct="${opt.isCorrect}" aria-pressed="false">
         <span class="learn-option-num">${i + 1}</span>
         <span class="learn-option-text">${escHtml(opt.text)}</span>
         <span class="learn-option-icon" aria-hidden="true"></span>
-      </button>
+      </div>
     `).join("");
 
     // Kích hoạt hiệu ứng chuyển tiếp mượt mà khi hiển thị câu hỏi mới
@@ -250,6 +250,8 @@
     // Disable all
     elOptions.querySelectorAll(".learn-option").forEach((b) => {
       b.disabled = true;
+      b.classList.add("disabled");
+      b.removeAttribute("tabindex");
       b.setAttribute("aria-pressed", "false");
     });
 
@@ -407,8 +409,21 @@
 
   /* ── EVENTS ── */
   elOptions.addEventListener("click", (e) => {
+    // Không kích hoạt chọn đáp án nếu người dùng đang bôi đen (highlight) text để copy hoặc dịch
+    const sel = window.getSelection();
+    if (sel && sel.toString().trim().length > 0) return;
+
     const btn = e.target.closest(".learn-option");
     if (btn && !answered) handleChoice(btn, e);
+  });
+  elOptions.addEventListener("keydown", (e) => {
+    if (["Enter", " "].includes(e.key)) {
+      const btn = e.target.closest(".learn-option");
+      if (btn && !answered) {
+        e.preventDefault();
+        handleChoice(btn, e);
+      }
+    }
   });
 
   elContinue.addEventListener("click", () => advance());

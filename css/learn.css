@@ -233,7 +233,8 @@ body.dark-mode .learn-card {
     opacity      .2s  ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  user-select: none;
+  user-select: text;
+  -webkit-user-select: text;
   will-change: transform, opacity;
 }
 body.dark-mode .learn-option {
@@ -241,19 +242,19 @@ body.dark-mode .learn-option {
 }
 /* Hover: chỉ desktop */
 @media (hover: hover) {
-  .learn-option:hover:not(:disabled) {
+  .learn-option:not(.disabled):not(:disabled):not(.dimmed):hover {
     border-color: var(--blue);
     background: var(--blue-light);
     box-shadow: 0 6px 20px rgba(2,86,155,.12);
   }
-  .learn-option:hover:not(:disabled) .learn-option-num {
+  .learn-option:not(.disabled):not(:disabled):not(.dimmed):hover .learn-option-num {
     background: var(--blue);
     color: white;
   }
 }
 /* Press state — instant feedback (quan trọng cho mobile) */
-.learn-option:active:not(:disabled),
-.learn-option.pressing:not(:disabled) {
+.learn-option:not(.disabled):not(:disabled):not(.dimmed):active,
+.learn-option.pressing:not(.disabled):not(:disabled):not(.dimmed) {
   transform: scale(0.96);
   border-color: var(--blue);
   background: var(--blue-light);
@@ -272,8 +273,9 @@ body.dark-mode .learn-option {
   font-size: 11px;
   transition: background .15s ease, color .15s ease;
   flex-shrink: 0;
+  user-select: none;
 }
-.learn-option-text { flex: 1; }
+.learn-option-text { flex: 1; user-select: text; -webkit-user-select: text; }
 
 /* ✨ Ripple effect */
 .learn-option-ripple {
@@ -313,12 +315,11 @@ body.dark-mode .learn-option {
 .learn-option.dimmed {
   opacity: .25;
   transform: scale(0.97);
-  pointer-events: none;
   transition: opacity .25s ease, transform .25s ease !important;
 }
-.learn-option:disabled {
+.learn-option:disabled,
+.learn-option.disabled {
   cursor: default;
-  pointer-events: none;
 }
 
 /* Option icon badge */
