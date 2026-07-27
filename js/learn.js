@@ -17,6 +17,66 @@
     return a;
   };
 
+  /* ── SOUND ENGINE (Web Audio API — không cần file âm thanh) ── */
+  let _audioCtx = null;
+  const getAudioCtx = () => {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Resume nếu bị suspended (browser policy)
+    if (_audioCtx.state === "suspended") _audioCtx.resume();
+    return _audioCtx;
+  };
+
+  /**
+   * Phát một note với: frequency (Hz), loại sóng, volume, thời điểm bắt đầu,
+   * attack và release (giây).
+   */
+  const playNote = (freq, type, vol, startAt, attack, release) => {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, startAt);
+    gain.gain.setValueAtTime(0, startAt);
+    gain.gain.linearRampToValueAtTime(vol, startAt + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + attack + release);
+    osc.start(startAt);
+    osc.stop(startAt + attack + release + 0.05);
+  };
+
+  /* 🟢 Đúng: Tiếng "ding" vui — 2 note tăng dần (perfect fifth) */
+  const playCorrect = () => {
+    try {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      playNote(523.25, "sine", 0.18, now,       0.008, 0.22); // C5
+      playNote(783.99, "sine", 0.14, now + 0.1,  0.008, 0.32); // G5
+    } catch { /* ignore nếu browser block */ }
+  };
+
+  /* 🔴 Sai: Tiếng "thud" nhẹ — note thấp, tắt nhanh */
+  const playWrong = () => {
+    try {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      playNote(200, "sawtooth", 0.10, now,       0.005, 0.12);
+      playNote(150, "sine",     0.08, now + 0.07, 0.005, 0.18);
+    } catch { /* ignore */ }
+  };
+
+  /* 🎉 Hoàn thành vòng: Fanfare 4 note */
+  const playComplete = () => {
+    try {
+      const ctx = getAudioCtx();
+      const now = ctx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+      notes.forEach((freq, i) => {
+        playNote(freq, "sine", 0.15, now + i * 0.14, 0.01, 0.25);
+      });
+    } catch { /* ignore */ }
+  };
+
   /* ── STATE ── */
   let queue   = [];      // danh sách câu hỏi trong vòng hiện tại (ids)
   let qIndex  = 0;       // vị trí hiện tại trong queue
@@ -171,6 +231,7 @@
 
     if (isCorrect) {
       correct++;
+      playCorrect(); // 🟢 Âm thanh đúng
       btn.classList.add("correct");
       btn.setAttribute("aria-pressed", "true");
 
@@ -186,6 +247,7 @@
 
     } else {
       wrong++;
+      playWrong(); // 🔴 Âm thanh sai
       const id = queue[qIndex];
       if (!wrongIds.includes(id)) wrongIds.push(id);
 
@@ -244,6 +306,7 @@
 
   /* ── COMPLETE ── */
   const showComplete = () => {
+    playComplete(); // 🎉 Fanfare hoàn thành vòng
     const accuracy = correct + wrong > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
     const stillWrong = wrongIds.length;
 
