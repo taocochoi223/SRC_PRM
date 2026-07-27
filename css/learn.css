@@ -285,7 +285,7 @@ body.dark-mode .learn-option {
 /* Press state — instant feedback (quan trọng cho mobile) */
 .learn-option:not(.disabled):not(:disabled):not(.dimmed):active,
 .learn-option.pressing:not(.disabled):not(:disabled):not(.dimmed) {
-  transform: scale(0.96);
+  transform: scale(0.99);
   border-color: var(--blue);
   background: var(--blue-light);
   transition-duration: .06s;
@@ -317,35 +317,35 @@ body.dark-mode .learn-option {
   pointer-events: none;
 }
 
-/* Result states */
+/* Result states - Mượt mà, kiên định, không co giãn gây cà giựt */
 .learn-option.correct {
   border-color: var(--success) !important;
   background: var(--success-bg) !important;
-  color: #08774e;
-  box-shadow: 0 6px 22px rgba(16, 185, 129, .2) !important;
-  animation: correctPop .45s cubic-bezier(.34,1.4,.64,1) both;
-  transition: none !important;
+  color: #08774e !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, .18) !important;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
 }
 .learn-option.correct .learn-option-num {
   background: var(--success);
   color: white;
-  animation: numPop .38s cubic-bezier(.34,1.4,.64,1) .04s both;
+  transition: background 0.2s ease, color 0.2s ease !important;
 }
 .learn-option.wrong {
   border-color: var(--danger) !important;
   background: var(--danger-bg) !important;
-  color: var(--danger);
-  animation: wrongShake .45s cubic-bezier(.36,.07,.19,.97) both;
-  transition: none !important;
+  color: var(--danger) !important;
+  animation: gentleShake .32s cubic-bezier(.36,.07,.19,.97) both;
+  transition: background 0.2s ease, border-color 0.2s ease !important;
 }
 .learn-option.wrong .learn-option-num {
   background: var(--danger);
   color: white;
+  transition: background 0.2s ease, color 0.2s ease !important;
 }
 .learn-option.dimmed {
-  opacity: .25;
-  transform: scale(0.97);
-  transition: opacity .25s ease, transform .25s ease !important;
+  opacity: 0.38;
+  pointer-events: none;
+  transition: opacity .25s ease !important;
 }
 .learn-option:disabled,
 .learn-option.disabled {
@@ -374,30 +374,17 @@ body.dark-mode .learn-option {
   border-radius: 0 0 14px 14px;
   transform-origin: left;
   transform: scaleX(0);
-  animation: autoAdvanceBar var(--auto-next, 900ms) linear .1s both;
-  opacity: .7;
+  animation: autoAdvanceBar var(--auto-next, 900ms) linear .05s both;
+  opacity: .75;
 }
 @keyframes autoAdvanceBar {
   from { transform: scaleX(0); }
   to   { transform: scaleX(1); }
 }
 
-/* Feedback hint */
+/* Feedback hint - Ẩn hoàn toàn để ngăn chặn Layout Shift (giữ card ổn định 100%) */
 .learn-feedback-hint {
-  margin-top: 16px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  background: #fff8e1;
-  border: 1px solid #fce082;
-  color: #856a00;
-  font-size: 13px;
-  font-weight: 600;
-  animation: hintSlideIn .3s cubic-bezier(.16,1,.3,1) both;
-}
-.learn-feedback-hint.is-correct {
-  background: var(--success-bg);
-  border-color: #a8e4c9;
-  color: #08774e;
+  display: none !important;
 }
 
 /* Footer */
@@ -413,13 +400,13 @@ body.dark-mode .learn-option {
   background: rgba(255,255,255,.97);
   border-top: 1px solid var(--line);
   backdrop-filter: blur(14px);
-  animation: slideUp .45s cubic-bezier(.16,1,.3,1) both;
+  animation: slideUp .35s cubic-bezier(.16,1,.3,1) both;
 }
 body.dark-mode .learn-footer {
   background: rgba(12,29,43,.97);
 }
 @keyframes slideUp {
-  from { transform: translateY(110%); opacity: 0; }
+  from { transform: translateY(100%); opacity: 0; }
   to   { transform: none; opacity: 1; }
 }
 .learn-continue-hint {
@@ -434,43 +421,21 @@ body.dark-mode .learn-footer {
 
 /* ── Animations ── */
 
-/*
- * Card leave: vật xuống + fade — bỏ blur (gây jank nặng trên mobile)
- * translateY tự nhiên hơn translateX với scroll context
- */
+/* Card leave & enter: chuyển động mềm mại không bay lên bay xuống (translateY) gây đau mắt */
 @keyframes cardLeave {
-  0%   { opacity: 1;    transform: translateY(0)    scale(1); }
-  100% { opacity: 0;    transform: translateY(-28px) scale(0.96); }
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.985); }
 }
-/* Card enter: từ dưới lướt lên — spring easing */
 @keyframes cardEnter {
-  0%   { opacity: 0;    transform: translateY(32px)  scale(0.97); }
-  100% { opacity: 1;    transform: translateY(0)     scale(1); }
+  0%   { opacity: 0; transform: scale(0.985); }
+  100% { opacity: 1; transform: scale(1); }
 }
 .learn-card.leaving {
-  animation: cardLeave .22s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: cardLeave .18s cubic-bezier(0.4, 0, 1, 1) forwards;
   pointer-events: none;
 }
 .learn-card.entering {
-  animation: cardEnter .38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Options: hiện nhanh theo stagger ngắn — không cần đợi lâu */
-@keyframes optionIn {
-  0%   { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
-}
-.learn-card.entering .learn-option:nth-child(1) {
-  animation: optionIn .3s cubic-bezier(.16,1,.3,1) .08s both;
-}
-.learn-card.entering .learn-option:nth-child(2) {
-  animation: optionIn .3s cubic-bezier(.16,1,.3,1) .13s both;
-}
-.learn-card.entering .learn-option:nth-child(3) {
-  animation: optionIn .3s cubic-bezier(.16,1,.3,1) .18s both;
-}
-.learn-card.entering .learn-option:nth-child(4) {
-  animation: optionIn .3s cubic-bezier(.16,1,.3,1) .23s both;
+  animation: cardEnter .26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Ripple */
@@ -478,32 +443,12 @@ body.dark-mode .learn-footer {
   to { transform: scale(4); opacity: 0; }
 }
 
-/* Correct: bố cục lên nhẹ — không quá to */
-@keyframes correctPop {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.04); }
-  70%  { transform: scale(1.015); }
-  100% { transform: scale(1.02); }
-}
-@keyframes numPop {
-  0%   { transform: scale(0.5); opacity: 0; }
-  55%  { transform: scale(1.18); }
-  100% { transform: scale(1);   opacity: 1; }
-}
-
-/* Wrong: rung nhỹ — không quá mạnh */
-@keyframes wrongShake {
-  0%,100% { transform: translateX(0); }
-  18%  { transform: translateX(-8px); }
-  36%  { transform: translateX(7px); }
-  54%  { transform: translateX(-5px); }
-  72%  { transform: translateX(4px); }
-}
-
-/* Hint */
-@keyframes hintSlideIn {
-  0%   { opacity: 0; transform: translateY(8px); }
-  100% { opacity: 1; transform: translateY(0); }
+/* Rung nhẹ siêu mượt khi sai (không giật bạt) */
+@keyframes gentleShake {
+  0%, 100% { transform: translateX(0); }
+  25%  { transform: translateX(-4px); }
+  50%  { transform: translateX(4px); }
+  75%  { transform: translateX(-2px); }
 }
 
 /* Complete modal extras */
