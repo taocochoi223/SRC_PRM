@@ -216,10 +216,34 @@
     elCard.classList.add("entering");
   };
 
+  /* ── RIPPLE EFFECT ── */
+  const addRipple = (btn, e) => {
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 1.5;
+    const x = (e.clientX ?? rect.left + rect.width / 2) - rect.left - size / 2;
+    const y = (e.clientY ?? rect.top  + rect.height / 2) - rect.top  - size / 2;
+    const ripple = document.createElement("span");
+    ripple.className = "learn-option-ripple";
+    Object.assign(ripple.style, {
+      width: `${size}px`, height: `${size}px`,
+      left: `${x}px`,   top:  `${y}px`
+    });
+    btn.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+  };
+
+  /* ── HAPTIC ── */
+  const haptic = (pattern) => {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  };
+
   /* ── HANDLE CHOICE ── */
-  const handleChoice = (btn) => {
+  const handleChoice = (btn, evt) => {
     if (answered) return;
     answered = true;
+
+    // Ripple ngay lập tức
+    if (evt) addRipple(btn, evt);
 
     const isCorrect = btn.dataset.correct === "true";
 
@@ -231,9 +255,11 @@
 
     if (isCorrect) {
       correct++;
-      playCorrect(); // 🟢 Âm thanh đúng
+      playCorrect();
+      haptic([30]);          // Rung nhẹ 1 lần — đúng
       btn.classList.add("correct");
       btn.setAttribute("aria-pressed", "true");
+      btn.style.setProperty("--auto-next", `${AUTO_NEXT_MS}ms`);
 
       // Dim others
       elOptions.querySelectorAll(".learn-option:not(.correct)").forEach((b) => b.classList.add("dimmed"));
@@ -242,18 +268,17 @@
       elHint.classList.add("is-correct");
       elHint.hidden = false;
 
-      // Tự động chuyển sau AUTO_NEXT_MS
       autoTimer = setTimeout(() => advance(), AUTO_NEXT_MS);
 
     } else {
       wrong++;
-      playWrong(); // 🔴 Âm thanh sai
+      playWrong();
+      haptic([50, 30, 50]);  // Rung 2 lần — sai
       const id = queue[qIndex];
       if (!wrongIds.includes(id)) wrongIds.push(id);
 
       btn.classList.add("wrong");
 
-      // Highlight correct
       elOptions.querySelectorAll(".learn-option").forEach((b) => {
         if (b.dataset.correct === "true") b.classList.add("correct");
         else if (b !== btn) b.classList.add("dimmed");
@@ -261,8 +286,6 @@
 
       elHint.textContent = "Đừng lo, bạn vẫn đang học mà!";
       elHint.hidden = false;
-
-      // Show footer
       elFooter.hidden = false;
     }
 
@@ -300,7 +323,7 @@
         qIndex = nextIndex;
         saveState();
         renderQuestion();
-      }, 320);
+      }, 230);
     }
   };
 
@@ -385,7 +408,7 @@
   /* ── EVENTS ── */
   elOptions.addEventListener("click", (e) => {
     const btn = e.target.closest(".learn-option");
-    if (btn && !answered) handleChoice(btn);
+    if (btn && !answered) handleChoice(btn, e);
   });
 
   elContinue.addEventListener("click", () => advance());
@@ -421,22 +444,50 @@
     saveState();
     elCard.classList.remove("entering");
     elCard.classList.add("leaving");
-        setTimeout(() => {
+    setTimeout(() => {
       elCard.classList.remove("leaving");
       renderQuestion();
-    }, 320);
+    }, 230);
+  });
+
+  // Nút Thứ tự — sắp xếp câu hỏi theo id gốc từ 1 → 100
+  document.querySelector("#btn-order")?.addEventListener("click", (e) => {
+    const btn = e.currentTarget;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = "<span>✓ Đã sắp xếp!</span>";
+    btn.style.color = "var(--blue)";
+    btn.style.borderColor = "var(--blue)";
+    btn.style.background = "var(--blue-light)";
+    setTimeout(() => {
+      btn.innerHTML = originalHtml;
+      btn.style.color = "";
+      btn.style.borderColor = "";
+      btn.style.background = "";
+    }, 1400);
+
+    // Sắp xếp toàn bộ queue theo id tăng dần, bắt đầu từ đầu
+    queue = [...queue].sort((a, b) => a - b);
+    qIndex = 0;
+    saveState();
+
+    elCard.classList.remove("entering");
+    elCard.classList.add("leaving");
+    setTimeout(() => {
+      elCard.classList.remove("leaving");
+      renderQuestion();
+    }, 230);
   });
 
   // Nút Reset (Học lại từ đầu)
   document.querySelector("#btn-reset")?.addEventListener("click", () => {
-    if (window.confirm("Bạn có chắc chắn muốn đặt lại toàn bộ tiến trình học từ đầu không?")) {
+    if (window.confirm("Bạn có chắc chắn muốn đặt lại toàn bộ tiến trình học từ đầu không?\n(Tiến trình sẽ được xóa và bắt đầu lại từ câu 1)")) {
       elCard.classList.remove("entering");
       elCard.classList.add("leaving");
           setTimeout(() => {
         elCard.classList.remove("leaving");
         startFreshRound();
         renderQuestion();
-      }, 320);
+      }, 230);
     }
   });
 
