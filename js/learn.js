@@ -177,7 +177,7 @@
   };
 
   /* ── ELEMENTS ── */
-  const elProgress  = $("#learn-progress-fill");
+  const elProgressBar = $("#learn-progress-bar");
   const elRoundBadge= $("#round-badge");
   const elRoundCount= $("#round-count");
   const elCard      = $("#learn-card");
@@ -191,6 +191,34 @@
   const elHdrCorr   = $("#hdr-correct");
   const elHdrTotal  = $("#hdr-total");
   const elChooseLabel = $("#learn-choose-label");
+
+  /* ── PROGRESS BAR RENDER (THEO TỪNG CHẶNG) ── */
+  const renderProgressBar = (isAllDone = false) => {
+    if (!elProgressBar) return;
+    const totalAll = completedCount + pendingIds.length + (currentBatchTotal || queue.length || BATCH_SIZE);
+    const totalStages = Math.max(1, Math.ceil(totalAll / BATCH_SIZE));
+    const currentStageIdx = Math.min(totalStages - 1, Math.floor(completedCount / BATCH_SIZE));
+
+    let html = "";
+    for (let i = 0; i < totalStages; i++) {
+      let fillWidth = "0%";
+      let extraClass = "";
+      if (isAllDone || i < currentStageIdx) {
+        fillWidth = "100%";
+        extraClass = "completed";
+      } else if (i === currentStageIdx) {
+        const stageDone = isBatchRetry ? (currentBatchTotal - queue.length + qIndex) : qIndex;
+        const stagePct = Math.min(100, Math.max(0, Math.round((stageDone / Math.max(1, currentBatchTotal)) * 100)));
+        fillWidth = `${stagePct}%`;
+        extraClass = "active";
+      }
+      html += `
+        <div class="learn-progress-seg ${extraClass}" title="Chặng ${i + 1} (${i * BATCH_SIZE + 1}–${Math.min(totalAll, (i + 1) * BATCH_SIZE)})">
+          <div class="learn-progress-seg-fill" style="width: ${fillWidth};"></div>
+        </div>`;
+    }
+    elProgressBar.innerHTML = html;
+  };
 
   /* ── BUILD OPTIONS ── */
   /**
@@ -224,9 +252,8 @@
     elHdrCorr.textContent  = correct;
     elHdrTotal.textContent = correct + wrong;
 
-    // Progress
-    const progressPct = Math.min(100, Math.round(((completedCount + qIndex) / Math.max(1, totalAll)) * 100));
-    elProgress.style.width = `${progressPct}%`;
+    // Progress (Chia chặng động)
+    renderProgressBar(false);
 
     // Round info
     elRoundBadge.textContent = `Chặng ${round}`;
@@ -380,7 +407,7 @@
 
         if (pendingIds.length === 0) {
           // Đã hoàn thành trọn vẹn toàn bộ các câu hỏi trong khóa!
-          elProgress.style.width = "100%";
+          renderProgressBar(true);
           showComplete();
           return;
         }

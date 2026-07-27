@@ -59,21 +59,51 @@ body.dark-mode .learn-header {
 .score-sep { color: var(--muted); }
 .score-total { color: var(--muted); }
 
-/* Progress bar (below header) */
+/* Progress bar (below header) - Segmented style */
 .learn-progress-bar {
   position: fixed;
-  top: 64px; left: 0; right: 0;
+  top: 66px; left: 0; right: 0;
   z-index: 39;
-  height: 5px;
-  background: #dfe8f0;
+  height: 6px;
+  background: transparent;
+  display: flex;
+  gap: 4px;
+  padding: 0 20px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
-.learn-progress-fill {
+.learn-progress-seg {
+  flex: 1;
+  height: 100%;
+  background: #dfe8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+body.dark-mode .learn-progress-seg {
+  background: rgba(255, 255, 255, 0.15);
+}
+.learn-progress-seg-fill {
   height: 100%;
   width: 0%;
   background: linear-gradient(90deg, var(--blue), var(--cyan));
-  transition: width .7s cubic-bezier(.16, 1, .3, 1);
-  border-radius: 0 99px 99px 0;
-  box-shadow: 0 0 8px rgba(2, 86, 155, .35);
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(.16, 1, .3, 1);
+}
+.learn-progress-seg.completed .learn-progress-seg-fill {
+  background: var(--success);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+.learn-progress-seg.active {
+  background: #c2d5e6;
+  box-shadow: 0 0 6px rgba(2, 86, 155, 0.15);
+}
+body.dark-mode .learn-progress-seg.active {
+  background: rgba(255, 255, 255, 0.25);
+}
+.learn-progress-seg.active .learn-progress-seg-fill {
+  background: linear-gradient(90deg, var(--blue), var(--cyan));
+  box-shadow: 0 0 8px rgba(2, 86, 155, 0.5);
 }
 
 /* Shell */
@@ -540,7 +570,7 @@ body.dark-mode .learn-footer {
 /* Responsive */
 @media (max-width: 620px) {
   .learn-header { padding: 0 14px; height: 58px; }
-  .learn-progress-bar { top: 58px; }
+  .learn-progress-bar { top: 60px; padding: 0 8px; gap: 2.5px; height: 5px; }
   .learn-shell { width: calc(100% - 24px); padding-top: 84px; padding-bottom: 100px; }
   .learn-options { grid-template-columns: 1fr; }
   .learn-footer { padding: 12px 14px; }
