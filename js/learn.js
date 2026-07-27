@@ -228,7 +228,7 @@
         elFooter.style.transform = "translateY(100%)";
       }
       setTimeout(() => {
-        elCard.classList.remove("leaving");
+              elCard.classList.remove("leaving");
         if (elFooter && !elFooter.hidden) {
           elFooter.hidden = true;
           elFooter.style.opacity = "";
@@ -238,7 +238,7 @@
         qIndex = nextIndex;
         saveState();
         renderQuestion();
-      }, 290);
+      }, 320);
     }
   };
 
@@ -358,10 +358,10 @@
     saveState();
     elCard.classList.remove("entering");
     elCard.classList.add("leaving");
-    setTimeout(() => {
+        setTimeout(() => {
       elCard.classList.remove("leaving");
       renderQuestion();
-    }, 290);
+    }, 320);
   });
 
   // Nút Reset (Học lại từ đầu)
@@ -369,11 +369,11 @@
     if (window.confirm("Bạn có chắc chắn muốn đặt lại toàn bộ tiến trình học từ đầu không?")) {
       elCard.classList.remove("entering");
       elCard.classList.add("leaving");
-      setTimeout(() => {
+          setTimeout(() => {
         elCard.classList.remove("leaving");
         startFreshRound();
         renderQuestion();
-      }, 290);
+      }, 320);
     }
   });
 
