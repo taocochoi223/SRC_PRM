@@ -106,16 +106,52 @@ body.dark-mode .learn-progress-seg.active {
   box-shadow: 0 0 8px rgba(2, 86, 155, 0.5);
 }
 
-/* Shell */
+/* Shell - Mở rộng cho màn hình bự 980px */
 .learn-shell {
-  width: min(760px, calc(100% - 40px));
+  width: min(980px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 100px 0 120px;
+  padding: 105px 0 130px;
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 0;
+  position: relative;
+}
+
+/* ✨ Ambient Aurora Background Glows (Lấp đầy không gian trống hai bên màn hình lớn cực kỳ sang trọng) */
+.learn-shell::before,
+.learn-shell::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(85px);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.learn-shell::before {
+  top: 15%;
+  left: max(2%, calc(50% - 780px));
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, var(--blue-light) 0%, #a4d8ff 60%, transparent 100%);
+}
+.learn-shell::after {
+  bottom: 10%;
+  right: max(2%, calc(50% - 780px));
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, #c4f0ff 0%, #c4fae0 60%, transparent 100%);
+}
+body.dark-mode .learn-shell::before {
+  background: radial-gradient(circle, rgba(2, 86, 155, 0.35) 0%, rgba(0, 150, 255, 0.15) 60%, transparent 100%);
+  opacity: 0.65;
+}
+body.dark-mode .learn-shell::after {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(100, 70, 220, 0.2) 60%, transparent 100%);
+  opacity: 0.65;
 }
 
 /* Round info */
@@ -185,19 +221,27 @@ body.dark-mode .learn-ctrl-btn {
   font-weight: 500;
 }
 
-/* Card */
+/* Card - Glassmorphism cao cấp và không gian thoáng đãng cho màn lớn */
 .learn-card {
-  background: white;
-  border-radius: 22px;
-  border: 1px solid var(--line);
-  box-shadow: 0 20px 60px rgba(1, 61, 112, .1);
-  padding: clamp(28px, 5vw, 46px);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  border: 1px solid rgba(223, 232, 240, 0.9);
+  box-shadow: 
+    0 24px 64px rgba(2, 50, 92, 0.08),
+    0 6px 18px rgba(2, 50, 92, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  padding: clamp(32px, 4.5vw, 54px) clamp(32px, 5vw, 64px);
   transition: box-shadow .4s cubic-bezier(.16, 1, .3, 1);
   will-change: transform, opacity;
 }
 body.dark-mode .learn-card {
-  background: var(--surface);
-  border-color: var(--line);
+  background: rgba(16, 28, 41, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 24px 64px rgba(0, 0, 0, 0.45),
+    0 6px 18px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 .learn-card-top {
   display: flex;
@@ -206,55 +250,59 @@ body.dark-mode .learn-card {
   margin-bottom: 24px;
 }
 .learn-tag {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
   color: var(--muted);
 }
 .learn-q-num {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--blue);
+  background: var(--blue-light);
+  padding: 4px 12px;
+  border-radius: 99px;
 }
 .learn-question {
-  margin: 0 0 28px;
-  font-size: clamp(20px, 3vw, 28px);
-  line-height: 1.5;
+  margin: 0 0 32px;
+  font-size: clamp(22px, 2.6vw, 32px);
+  line-height: 1.45;
   letter-spacing: -.5px;
   color: var(--ink);
   font-weight: 700;
 }
 .learn-choose-label {
-  margin: 0 0 14px;
-  font-size: 11px;
+  margin: 0 0 16px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--muted);
-  letter-spacing: .3px;
+  letter-spacing: .4px;
+  text-transform: uppercase;
 }
 
 /* Options grid */
 .learn-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 14px;
 }
 .learn-option {
   position: relative;
   overflow: hidden; /* for ripple */
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 16px;
-  border-radius: 14px;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 16px;
   border: 1.5px solid var(--line);
   background: white;
   color: var(--ink);
   cursor: pointer;
   text-align: left;
   font-weight: 500;
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.5;
   /* Chỉ animate những thuộc tính cần — nhanh hơn, GPU-friendly */
   transition:
     border-color .15s ease,
@@ -421,21 +469,21 @@ body.dark-mode .learn-footer {
 
 /* ── Animations ── */
 
-/* Card leave & enter: chuyển động mềm mại không bay lên bay xuống (translateY) gây đau mắt */
+/* Card leave & enter: Hiệu ứng chuyển tiếp lướt ngang (Horizontal Card Glide) tuyệt đẹp từ phải qua trái */
 @keyframes cardLeave {
-  0%   { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.985); }
+  0%   { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(-45px) scale(0.97); }
 }
 @keyframes cardEnter {
-  0%   { opacity: 0; transform: scale(0.985); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; transform: translateX(45px) scale(0.97); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
 }
 .learn-card.leaving {
-  animation: cardLeave .18s cubic-bezier(0.4, 0, 1, 1) forwards;
+  animation: cardLeave .22s cubic-bezier(0.4, 0, 1, 1) forwards;
   pointer-events: none;
 }
 .learn-card.entering {
-  animation: cardEnter .26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: cardEnter .35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Ripple */
