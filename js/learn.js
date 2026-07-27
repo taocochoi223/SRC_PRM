@@ -77,15 +77,23 @@
     } catch { /* ignore */ }
   };
 
+  /* ── CONFIG BATCH ── */
+  const BATCH_SIZE = 7; // Học theo chặng 7 câu giống Quizlet
+
   /* ── STATE ── */
-  let queue   = [];      // danh sách câu hỏi trong vòng hiện tại (ids)
-  let qIndex  = 0;       // vị trí hiện tại trong queue
-  let round   = 1;       // vòng học (mỗi vòng = hết queue)
-  let correct = 0;       // đúng trong toàn phiên
-  let wrong   = 0;       // sai (dù vẫn tính là "xem rồi")
-  let wrongIds = [];     // ids trả lời sai cần ôn lại
-  let answered = false;  // đã chọn đáp án chưa?
-  let autoTimer = null;
+  let queue        = []; // danh sách id câu hỏi trong chặng hiện tại (tối đa 7 câu)
+  let pendingIds   = []; // các id chưa vào chặng học
+  let completedCount = 0;// số câu đã hoàn thành trọn vẹn
+  let qIndex       = 0;  // vị trí hiện tại trong chặng queue (0-6)
+  let round        = 1;  // số thứ tự chặng (Mỗi chặng = 7 câu)
+  let correct      = 0;  // tổng đúng trong toàn phiên
+  let wrong        = 0;  // tổng sai trong toàn phiên
+  let wrongIds     = []; // toàn bộ ids từng sai (để có thể ôn lại cuối phiên)
+  let batchWrongIds= []; // các ids sai TRONG chặng 7 câu hiện tại (để lặp lại ngay lập tức)
+  let currentBatchTotal = 7; // tổng số câu của chặng ban đầu
+  let isBatchRetry = false;  // đang ở chế độ làm lại các câu sai của chặng hiện tại?
+  let answered     = false;  // đã chọn đáp án chưa?
+  let autoTimer    = null;
 
   const allQuestions = questions; // từ questions.js
 
@@ -96,18 +104,33 @@
   const loadState = () => {
     try {
       const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (s && Array.isArray(s.queue) && s.queue.length) {
-        // Tự động reset nếu người dùng trước đó đã học hết và không còn câu sai nào
-        if ((s.qIndex >= s.queue.length - 1 || s.isCompleted) && (!s.wrongIds || s.wrongIds.length === 0)) {
+      if (s && (Array.isArray(s.queue) || Array.isArray(s.pendingIds))) {
+        // Tự động reset nếu đã học xong hết và không còn gì để làm
+        if ((s.qIndex >= (s.queue ? s.queue.length - 1 : 0) || s.isCompleted) && (!s.pendingIds || s.pendingIds.length === 0) && (!s.batchWrongIds || s.batchWrongIds.length === 0) && (!s.wrongIds || s.wrongIds.length === 0)) {
           startFreshRound();
           return;
         }
-        queue    = s.queue;
-        qIndex   = Math.min(s.qIndex || 0, queue.length - 1);
-        round    = s.round || 1;
-        correct  = s.correct || 0;
-        wrong    = s.wrong   || 0;
-        wrongIds = s.wrongIds || [];
+        if (!s.pendingIds) {
+          // Migration từ dữ liệu phiên bản cũ (khi queue chứa thẳng 100 câu)
+          const allRem = s.queue.slice(s.qIndex || 0);
+          queue = allRem.slice(0, BATCH_SIZE);
+          pendingIds = allRem.slice(BATCH_SIZE);
+          qIndex = 0;
+          completedCount = s.qIndex || 0;
+          currentBatchTotal = queue.length;
+        } else {
+          queue        = s.queue || [];
+          pendingIds   = s.pendingIds || [];
+          qIndex       = Math.min(s.qIndex || 0, Math.max(0, queue.length - 1));
+          completedCount = s.completedCount || 0;
+          currentBatchTotal = s.currentBatchTotal || queue.length || BATCH_SIZE;
+        }
+        round        = s.round || 1;
+        correct      = s.correct || 0;
+        wrong        = s.wrong   || 0;
+        wrongIds     = s.wrongIds || [];
+        batchWrongIds= s.batchWrongIds || [];
+        isBatchRetry = s.isBatchRetry || false;
         return;
       }
     } catch { /* ignore */ }
@@ -116,26 +139,40 @@
 
   const saveState = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      queue, qIndex, round, correct, wrong, wrongIds
+      queue, pendingIds, completedCount, qIndex, round, correct, wrong, wrongIds, batchWrongIds, currentBatchTotal, isBatchRetry
     }));
   };
 
-  const startFreshRound = () => {
-    queue    = shuffle(allQuestions.map((q) => q.id));
-    qIndex   = 0;
-    round    = 1;
-    correct  = 0;
-    wrong    = 0;
-    wrongIds = [];
+  const startFreshRound = (ordered = false) => {
+    const ids = ordered
+      ? allQuestions.map((q) => q.id).sort((a, b) => a - b)
+      : shuffle(allQuestions.map((q) => q.id));
+    queue            = ids.slice(0, BATCH_SIZE);
+    pendingIds       = ids.slice(BATCH_SIZE);
+    completedCount   = 0;
+    currentBatchTotal= queue.length;
+    isBatchRetry     = false;
+    qIndex           = 0;
+    round            = 1;
+    correct          = 0;
+    wrong            = 0;
+    wrongIds         = [];
+    batchWrongIds    = [];
     saveState();
   };
 
   const startReviewRound = () => {
-    // Chỉ ôn lại những câu đã sai
-    queue    = shuffle([...new Set(wrongIds)]);
-    wrongIds = [];
-    qIndex   = 0;
-    round   += 1;
+    // Chỉ ôn lại toàn bộ những câu từng trả lời sai
+    const allMissed = shuffle([...new Set(wrongIds)]);
+    queue            = allMissed.slice(0, BATCH_SIZE);
+    pendingIds       = allMissed.slice(BATCH_SIZE);
+    completedCount   = 0;
+    currentBatchTotal= queue.length;
+    isBatchRetry     = false;
+    wrongIds         = [];
+    batchWrongIds    = [];
+    qIndex           = 0;
+    round            = 1;
     saveState();
   };
 
@@ -179,22 +216,28 @@
     if (!q) return;
 
     const opts = buildOptions(q);
-    const total = queue.length;
-    const done  = qIndex; // câu đã qua
+    const totalAll = completedCount + pendingIds.length + currentBatchTotal;
+    const currentGlobal = Math.min(totalAll, completedCount + Math.min(qIndex, currentBatchTotal) + 1);
+    const totalRemaining = pendingIds.length + queue.length - qIndex;
 
     // Header stats
     elHdrCorr.textContent  = correct;
     elHdrTotal.textContent = correct + wrong;
 
     // Progress
-    elProgress.style.width = `${(done / total) * 100}%`;
+    const progressPct = Math.min(100, Math.round(((completedCount + qIndex) / Math.max(1, totalAll)) * 100));
+    elProgress.style.width = `${progressPct}%`;
 
     // Round info
-    elRoundBadge.textContent = `Vòng ${round}`;
-    elRoundCount.textContent = `${total - done} câu còn lại`;
+    elRoundBadge.textContent = `Chặng ${round}`;
+    if (isBatchRetry) {
+      elRoundCount.textContent = `🔁 Ôn lại ${queue.length - qIndex} câu chưa thuộc • Còn ${totalRemaining} câu tổng`;
+    } else {
+      elRoundCount.textContent = `Chùm ${queue.length} câu • Còn ${totalRemaining} câu tổng`;
+    }
 
     // Card
-    elQNum.textContent     = `Câu ${done + 1} / ${total}`;
+    elQNum.textContent     = `Câu ${currentGlobal} / ${totalAll}`;
     elQuestion.textContent = q.question;
     elChooseLabel.textContent = "Chọn đáp án đúng";
     elHint.hidden          = true;
@@ -278,6 +321,7 @@
       haptic([50, 30, 50]);  // Rung 2 lần — sai
       const id = queue[qIndex];
       if (!wrongIds.includes(id)) wrongIds.push(id);
+      if (!batchWrongIds.includes(id)) batchWrongIds.push(id);
 
       btn.classList.add("wrong");
 
@@ -301,32 +345,62 @@
     clearTimeout(autoTimer);
     const nextIndex = qIndex + 1;
 
-    if (nextIndex >= queue.length) {
-      // Hết vòng
-      elProgress.style.width = "100%";
-      showComplete();
-    } else {
-      // Animate card & footer exit mượt mà
-      elCard.classList.remove("entering");
-      elCard.classList.add("leaving");
+    // Animate card & footer exit mượt mà
+    elCard.classList.remove("entering");
+    elCard.classList.add("leaving");
+    if (elFooter && !elFooter.hidden) {
+      elFooter.style.transition = "opacity 0.2s ease, transform 0.2s ease";
+      elFooter.style.opacity = "0";
+      elFooter.style.transform = "translateY(100%)";
+    }
+    setTimeout(() => {
+      elCard.classList.remove("leaving");
       if (elFooter && !elFooter.hidden) {
-        elFooter.style.transition = "opacity 0.2s ease, transform 0.2s ease";
-        elFooter.style.opacity = "0";
-        elFooter.style.transform = "translateY(100%)";
+        elFooter.hidden = true;
+        elFooter.style.opacity = "";
+        elFooter.style.transform = "";
+        elFooter.style.transition = "";
       }
-      setTimeout(() => {
-              elCard.classList.remove("leaving");
-        if (elFooter && !elFooter.hidden) {
-          elFooter.hidden = true;
-          elFooter.style.opacity = "";
-          elFooter.style.transform = "";
-          elFooter.style.transition = "";
+
+      if (nextIndex >= queue.length) {
+        // Hết chặng / chùm 7 câu hiện tại
+        if (batchWrongIds.length > 0) {
+          // ⚠️ Có câu trả lời sai trong chặng 7 câu này -> Lặp lại ngay lập tức các câu sai đó cho đến khi thuộc (đúng hết)!
+          queue = shuffle([...batchWrongIds]);
+          batchWrongIds = [];
+          qIndex = 0;
+          isBatchRetry = true;
+          saveState();
+          renderQuestion();
+          return;
         }
+
+        // ✅ Đã hoàn thành hoàn hảo chặng 7 câu hiện tại!
+        completedCount += currentBatchTotal;
+
+        if (pendingIds.length === 0) {
+          // Đã hoàn thành trọn vẹn toàn bộ các câu hỏi trong khóa!
+          elProgress.style.width = "100%";
+          showComplete();
+          return;
+        }
+
+        // Bước sang chặng 7 câu tiếp theo
+        queue = pendingIds.slice(0, BATCH_SIZE);
+        pendingIds = pendingIds.slice(BATCH_SIZE);
+        currentBatchTotal = queue.length;
+        round++;
+        qIndex = 0;
+        batchWrongIds = [];
+        isBatchRetry = false;
+        saveState();
+        renderQuestion();
+      } else {
         qIndex = nextIndex;
         saveState();
         renderQuestion();
-      }, 230);
-    }
+      }
+    }, 230);
   };
 
   /* ── COMPLETE ── */
@@ -448,15 +522,17 @@
       btn.style.borderColor = "";
     }, 1200);
 
-    if (queue.length - qIndex <= 1) {
-      queue = shuffle(queue);
-      qIndex = 0;
-    } else {
-      const past = queue.slice(0, qIndex);
-      const remaining = shuffle(queue.slice(qIndex));
-      queue = [...past, ...remaining];
-    }
+    // Xáo trộn toàn bộ các câu còn lại và gom vào các chặng 7 câu mới
+    const remaining = [...queue.slice(qIndex), ...pendingIds];
+    const shuffledRem = shuffle([...new Set(remaining)]);
+    queue = shuffledRem.slice(0, BATCH_SIZE);
+    pendingIds = shuffledRem.slice(BATCH_SIZE);
+    currentBatchTotal = queue.length;
+    qIndex = 0;
+    batchWrongIds = [];
+    isBatchRetry = false;
     saveState();
+
     elCard.classList.remove("entering");
     elCard.classList.add("leaving");
     setTimeout(() => {
@@ -465,7 +541,7 @@
     }, 230);
   });
 
-  // Nút Thứ tự — sắp xếp câu hỏi theo id gốc từ 1 → 100
+  // Nút Thứ tự — sắp xếp câu hỏi theo id gốc từ 1 → 100 và chia chặng 7 câu
   document.querySelector("#btn-order")?.addEventListener("click", (e) => {
     const btn = e.currentTarget;
     const originalHtml = btn.innerHTML;
@@ -480,10 +556,8 @@
       btn.style.background = "";
     }, 1400);
 
-    // Sắp xếp toàn bộ queue theo id tăng dần, bắt đầu từ đầu
-    queue = [...queue].sort((a, b) => a - b);
-    qIndex = 0;
-    saveState();
+    // Bắt đầu lại theo đúng thứ tự 1 → 100 từng chặng 7 câu
+    startFreshRound(true);
 
     elCard.classList.remove("entering");
     elCard.classList.add("leaving");
@@ -498,7 +572,7 @@
     if (window.confirm("Bạn có chắc chắn muốn đặt lại toàn bộ tiến trình học từ đầu không?\n(Tiến trình sẽ được xóa và bắt đầu lại từ câu 1)")) {
       elCard.classList.remove("entering");
       elCard.classList.add("leaving");
-          setTimeout(() => {
+      setTimeout(() => {
         elCard.classList.remove("leaving");
         startFreshRound();
         renderQuestion();
