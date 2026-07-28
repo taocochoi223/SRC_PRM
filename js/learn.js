@@ -469,132 +469,53 @@
       padding: "20px 24px 24px"
     });
 
-    // Build DOM dạng accordion - mặc định mở tất cả, click để đóng/mở
-    elBody.innerHTML = "";
+    // Build HTML thẳng vào innerHTML - đơn giản, không animation, không accordion
+    let html = "";
     batchIds.forEach((id, idx) => {
       const q = qMap.get(id);
       if (!q) return;
       const correctOpt = q.options.find(o => o.key === q.correctAnswer);
       const wasWrong   = wrongIds.includes(id);
+      const borderClr  = wasWrong ? "#fca5a5" : "#e2e8f0";
+      const hdrBg      = wasWrong ? "#fff1f2" : "#f8fafc";
+      const numBg      = wasWrong ? "#fee2e2" : "#dbeafe";
+      const numClr     = wasWrong ? "#dc2626" : "#1d4ed8";
 
-      /* ── Card wrapper ── */
-      const card = document.createElement("div");
-      Object.assign(card.style, {
-        border: wasWrong ? "1px solid #fca5a5" : "1px solid #dde5ef",
-        borderRadius: "14px",
-        overflow: "hidden",
-        background: "#fff",
-        boxShadow: "0 1px 4px rgba(0,0,0,.06)"
-      });
-
-      /* ── Header (click để toggle) ── */
-      const header = document.createElement("div");
-      Object.assign(header.style, {
-        display: "flex", alignItems: "flex-start", gap: "12px",
-        padding: "14px 16px", cursor: "pointer", userSelect: "none",
-        background: wasWrong ? "#fff5f5" : "#f4f7fb"
-      });
-
-      const numBadge = document.createElement("span");
-      numBadge.textContent = String(idx + 1).padStart(2, "0");
-      Object.assign(numBadge.style, {
-        flexShrink: "0", width: "28px", height: "28px", borderRadius: "8px",
-        background: wasWrong ? "#fee2e2" : "#dbeafe",
-        color: wasWrong ? "#ef4444" : "#02569b",
-        fontSize: "11px", fontWeight: "800",
-        display: "flex", alignItems: "center", justifyContent: "center"
-      });
-
-      const qText = document.createElement("span");
-      qText.textContent = q.question;
-      Object.assign(qText.style, {
-        flex: "1", fontSize: "13px", fontWeight: "700",
-        lineHeight: "1.5", color: "#0d1f35", paddingTop: "4px"
-      });
-
-      const chevron = document.createElement("span");
-      chevron.textContent = "▲";
-      Object.assign(chevron.style, {
-        fontSize: "10px", color: "#6b8099", flexShrink: "0",
-        marginTop: "6px", transition: "transform .25s ease"
-      });
-
-      header.appendChild(numBadge);
-      header.appendChild(qText);
-      header.appendChild(chevron);
-      card.appendChild(header);
-
-      /* ── Body (đáp án + giải thích) ── */
-      const body = document.createElement("div");
-      Object.assign(body.style, {
-        overflow: "hidden",
-        maxHeight: "600px",  // expanded
-        transition: "max-height .3s ease, opacity .25s ease",
-        opacity: "1"
-      });
-
-      /* Options grid */
-      const optGrid = document.createElement("div");
-      Object.assign(optGrid.style, {
-        display: "grid", gridTemplateColumns: "1fr 1fr",
-        gap: "8px", padding: "12px 16px 8px"
-      });
-
+      let optsHtml = "";
       q.options.forEach(opt => {
-        const isCorrect = opt.key === q.correctAnswer;
-        const optEl = document.createElement("div");
-        Object.assign(optEl.style, {
-          display: "flex", alignItems: "center", gap: "8px",
-          padding: "10px 12px", borderRadius: "10px",
-          border: isCorrect ? "1.5px solid #10b981" : "1.5px solid #dde5ef",
-          background: isCorrect ? "#d1fae5" : "#f9fafb",
-          fontSize: "13px", fontWeight: isCorrect ? "700" : "500",
-          color: isCorrect ? "#065f46" : "#374151",
-          lineHeight: "1.4"
-        });
-
-        const keyBadge = document.createElement("span");
-        keyBadge.textContent = opt.key;
-        Object.assign(keyBadge.style, {
-          flexShrink: "0", width: "24px", height: "24px", borderRadius: "6px",
-          background: isCorrect ? "#10b981" : "#e5e7eb",
-          color: isCorrect ? "#fff" : "#6b7280",
-          fontSize: "10px", fontWeight: "800",
-          display: "flex", alignItems: "center", justifyContent: "center"
-        });
-
-        const optText = document.createElement("span");
-        optText.textContent = opt.text + (isCorrect ? " ✓" : "");
-        optEl.appendChild(keyBadge);
-        optEl.appendChild(optText);
-        optGrid.appendChild(optEl);
+        const ok  = opt.key === q.correctAnswer;
+        const bg  = ok ? "#dcfce7" : "#f8fafc";
+        const brd = ok ? "#16a34a" : "#e2e8f0";
+        const fg  = ok ? "#14532d" : "#374151";
+        const kbg = ok ? "#16a34a" : "#e5e7eb";
+        const kfg = ok ? "#fff"    : "#6b7280";
+        const fw  = ok ? "700"     : "500";
+        const lbl = ok ? escHtml(opt.text) + " <b>✓</b>" : escHtml(opt.text);
+        optsHtml += `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:10px;border:1.5px solid ${brd};background:${bg};margin-bottom:8px;box-sizing:border-box">
+          <span style="flex-shrink:0;min-width:26px;height:26px;border-radius:7px;background:${kbg};color:${kfg};font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${escHtml(opt.key)}</span>
+          <span style="font-size:13px;font-weight:${fw};color:${fg};line-height:1.5;padding-top:2px">${lbl}</span>
+        </div>`;
       });
-      body.appendChild(optGrid);
 
-      /* Explanation */
-      if (correctOpt && correctOpt.explanation) {
-        const expEl = document.createElement("div");
-        Object.assign(expEl.style, {
-          margin: "4px 16px 12px", padding: "10px 14px", borderRadius: "8px",
-          background: "#eff6ff", borderLeft: "3px solid #3b82f6",
-          fontSize: "12px", color: "#1e40af", lineHeight: "1.6"
-        });
-        expEl.innerHTML = "<strong>💡 Giải thích:</strong> " + escHtml(correctOpt.explanation);
-        body.appendChild(expEl);
-      }
+      const expHtml = (correctOpt && correctOpt.explanation)
+        ? `<div style="margin-top:6px;padding:10px 14px;border-radius:8px;background:#eff6ff;border-left:3px solid #3b82f6;font-size:12px;color:#1e40af;line-height:1.6">
+            <b>💡 Giải thích:</b> ${escHtml(correctOpt.explanation)}
+          </div>`
+        : "";
 
-      card.appendChild(body);
-      elBody.appendChild(card);
-
-      /* Toggle accordion khi click header */
-      let expanded = true;
-      header.addEventListener("click", () => {
-        expanded = !expanded;
-        body.style.maxHeight  = expanded ? "600px" : "0px";
-        body.style.opacity    = expanded ? "1" : "0";
-        chevron.style.transform = expanded ? "rotate(0deg)" : "rotate(180deg)";
-      });
+      html += `
+        <div style="border:1.5px solid ${borderClr};border-radius:14px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:visible">
+          <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px 12px;background:${hdrBg};border-bottom:1px solid ${borderClr};border-radius:13px 13px 0 0">
+            <span style="flex-shrink:0;min-width:28px;height:28px;border-radius:8px;background:${numBg};color:${numClr};font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${String(idx+1).padStart(2,"0")}</span>
+            <span style="font-size:14px;font-weight:700;color:#0f172a;line-height:1.5;padding-top:3px">${escHtml(q.question)}</span>
+          </div>
+          <div style="padding:14px 16px 10px">
+            ${optsHtml}
+            ${expHtml}
+          </div>
+        </div>`;
     });
+    elBody.innerHTML = html;
 
     // Hiện modal (dùng class thay vì hidden để không override display:flex)
     elModal.removeAttribute("hidden");
