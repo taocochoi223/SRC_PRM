@@ -2702,6 +2702,556 @@ const questions = [
       }
     ],
     "correctAnswer": "B"
+  },
+  {
+    "id": 101,
+    "question": "What happens if layout constraints are violated in Flutter?",
+    "options": [
+      { "key": "A", "text": "App crashes silently", "explanation": "App crashes silently không phải lựa chọn chính xác; đáp án đúng là A layout overflow error occurs." },
+      { "key": "B", "text": "Widget is ignored", "explanation": "Widget is ignored không phải lựa chọn chính xác; đáp án đúng là A layout overflow error occurs." },
+      { "key": "C", "text": "A layout overflow error occurs", "explanation": "Khi constraints bị vi phạm, Flutter sẽ hiển thị lỗi layout overflow (overflow error) rõ ràng trên màn hình." },
+      { "key": "D", "text": "UI is automatically fixed", "explanation": "UI is automatically fixed không phải lựa chọn chính xác; đáp án đúng là A layout overflow error occurs." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 102,
+    "question": "What is the primary benefit of InheritedWidget?",
+    "options": [
+      { "key": "A", "text": "Memory management", "explanation": "Memory management không phải lợi ích chính; đáp án đúng là Efficient data propagation." },
+      { "key": "B", "text": "Automatic layout", "explanation": "Automatic layout không phải lợi ích chính; đáp án đúng là Efficient data propagation." },
+      { "key": "C", "text": "State persistence", "explanation": "State persistence không phải lợi ích chính; đáp án đúng là Efficient data propagation." },
+      { "key": "D", "text": "Efficient data propagation", "explanation": "InheritedWidget cho phép truyền dữ liệu hiệu quả xuống cây widget mà không cần truyền qua từng constructor." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 103,
+    "question": "Which statement best describes Flutter's layout system?",
+    "options": [
+      { "key": "A", "text": "Uses XML layouts", "explanation": "Flutter không dùng XML; đáp án đúng là Parent sets constraints, child chooses size." },
+      { "key": "B", "text": "Child controls parent size", "explanation": "Child không điều khiển parent; đáp án đúng là Parent sets constraints, child chooses size." },
+      { "key": "C", "text": "Parent sets constraints, child chooses size", "explanation": "Trong Flutter, parent truyền constraints xuống, child chọn kích thước phù hợp trong phạm vi đó." },
+      { "key": "D", "text": "Based on absolute positioning", "explanation": "Flutter không dùng absolute positioning mặc định; đáp án đúng là Parent sets constraints, child chooses size." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 104,
+    "question": "Which database package provides SQL support in Flutter?",
+    "options": [
+      { "key": "A", "text": "shared_preferences", "explanation": "shared_preferences dùng cho key-value, không phải SQL; đáp án đúng là sqflite." },
+      { "key": "B", "text": "sqflite", "explanation": "sqflite là package cung cấp hỗ trợ SQLite (SQL) trong Flutter." },
+      { "key": "C", "text": "path", "explanation": "path là package xử lý đường dẫn file; đáp án đúng là sqflite." },
+      { "key": "D", "text": "hive", "explanation": "hive là NoSQL database; đáp án đúng là sqflite." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 105,
+    "question": "What role does the Flutter framework play in application development?",
+    "options": [
+      { "key": "A", "text": "It provides UI components and rendering logic", "explanation": "Flutter cung cấp các widget UI và engine rendering để xây dựng giao diện." },
+      { "key": "B", "text": "It manages database servers", "explanation": "Flutter không quản lý database server; đáp án đúng là It provides UI components and rendering logic." },
+      { "key": "C", "text": "It replaces the operating system", "explanation": "Flutter không thay thế OS; đáp án đúng là It provides UI components and rendering logic." },
+      { "key": "D", "text": "It runs backend business logic", "explanation": "Flutter không chạy backend; đáp án đúng là It provides UI components and rendering logic." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 106,
+    "question": "Which widget allows overlapping of its child widgets?",
+    "options": [
+      { "key": "A", "text": "Expanded", "explanation": "Expanded dùng để giãn widget trong Row/Column; đáp án đúng là Stack." },
+      { "key": "B", "text": "Row", "explanation": "Row xếp widget ngang hàng; đáp án đúng là Stack." },
+      { "key": "C", "text": "Column", "explanation": "Column xếp widget dọc; đáp án đúng là Stack." },
+      { "key": "D", "text": "Stack", "explanation": "Stack cho phép các widget con chồng lên nhau (overlap) theo thứ tự z-index." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 107,
+    "question": "What does crossAxisAlignment control?",
+    "options": [
+      { "key": "A", "text": "Child order", "explanation": "Child order không phải chức năng của crossAxisAlignment; đáp án đúng là Horizontal alignment in Column." },
+      { "key": "B", "text": "Widget size", "explanation": "Widget size không phải chức năng của crossAxisAlignment; đáp án đúng là Horizontal alignment in Column." },
+      { "key": "C", "text": "Vertical alignment in Column", "explanation": "crossAxisAlignment trong Column điều khiển căn chỉnh theo chiều ngang (cross axis), không phải dọc." },
+      { "key": "D", "text": "Horizontal alignment in Column", "explanation": "Trong Column, cross axis là chiều ngang, nên crossAxisAlignment điều khiển căn chỉnh ngang của các widget con." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 108,
+    "question": "What problem does state lifting help solve?",
+    "options": [
+      { "key": "A", "text": "Sharing state between widgets", "explanation": "State lifting (nâng state lên widget cha) giúp chia sẻ state giữa các widget anh em." },
+      { "key": "B", "text": "API errors", "explanation": "API errors không phải vấn đề state lifting giải quyết; đáp án đúng là Sharing state between widgets." },
+      { "key": "C", "text": "Layout overflow", "explanation": "Layout overflow không phải vấn đề state lifting giải quyết; đáp án đúng là Sharing state between widgets." },
+      { "key": "D", "text": "UI rendering", "explanation": "UI rendering không phải vấn đề state lifting giải quyết; đáp án đúng là Sharing state between widgets." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 109,
+    "question": "What is the role of the version property in openDatabase()?",
+    "options": [
+      { "key": "A", "text": "Package version", "explanation": "Không phải package version; đáp án đúng là Database schema version for migrations." },
+      { "key": "B", "text": "Database schema version for migrations", "explanation": "version trong openDatabase() xác định phiên bản schema để thực hiện migrations khi cập nhật cấu trúc DB." },
+      { "key": "C", "text": "App version", "explanation": "Không phải app version; đáp án đúng là Database schema version for migrations." },
+      { "key": "D", "text": "Flutter SDK version", "explanation": "Không phải Flutter SDK version; đáp án đúng là Database schema version for migrations." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 110,
+    "question": "Which widget is commonly used as the root of a Flutter app?",
+    "options": [
+      { "key": "A", "text": "Column", "explanation": "Column là layout widget, không phải root; đáp án đúng là MaterialApp." },
+      { "key": "B", "text": "Container", "explanation": "Container là layout widget; đáp án đúng là MaterialApp." },
+      { "key": "C", "text": "Scaffold", "explanation": "Scaffold thường là root của một screen, nhưng root của toàn app là MaterialApp." },
+      { "key": "D", "text": "MaterialApp", "explanation": "MaterialApp là widget gốc thường dùng cho Flutter app, cung cấp theme, routing và localization." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 111,
+    "question": "Which HTTP method is typically used to retrieve data?",
+    "options": [
+      { "key": "A", "text": "PUT", "explanation": "PUT dùng để cập nhật dữ liệu; đáp án đúng là GET." },
+      { "key": "B", "text": "DELETE", "explanation": "DELETE dùng để xóa dữ liệu; đáp án đúng là GET." },
+      { "key": "C", "text": "GET", "explanation": "GET là HTTP method dùng để truy xuất (retrieve) dữ liệu từ server." },
+      { "key": "D", "text": "POST", "explanation": "POST dùng để gửi/tạo dữ liệu mới; đáp án đúng là GET." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 112,
+    "question": "What is the primary purpose of ThemeData in Flutter?",
+    "options": [
+      { "key": "A", "text": "Handle state changes", "explanation": "ThemeData không xử lý state; đáp án đúng là Define application-wide visual styles." },
+      { "key": "B", "text": "Control animations", "explanation": "ThemeData không điều khiển animation; đáp án đúng là Define application-wide visual styles." },
+      { "key": "C", "text": "Define application-wide visual styles", "explanation": "ThemeData định nghĩa bộ style màu sắc, typography, và hình dạng dùng xuyên suốt toàn bộ app." },
+      { "key": "D", "text": "Manage navigation", "explanation": "ThemeData không quản lý navigation; đáp án đúng là Define application-wide visual styles." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 113,
+    "question": "What is session expiration?",
+    "options": [
+      { "key": "A", "text": "Theme reset", "explanation": "Theme reset không phải session expiration; đáp án đúng là Automatic logout after inactivity." },
+      { "key": "B", "text": "UI timeout", "explanation": "UI timeout không phải session expiration; đáp án đúng là Automatic logout after inactivity." },
+      { "key": "C", "text": "API limit", "explanation": "API limit không phải session expiration; đáp án đúng là Automatic logout after inactivity." },
+      { "key": "D", "text": "Automatic logout after inactivity", "explanation": "Session expiration là cơ chế tự động đăng xuất người dùng sau một khoảng thời gian không hoạt động." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 114,
+    "question": "What does the build() method return in a widget?",
+    "options": [
+      { "key": "A", "text": "Application state", "explanation": "build() không trả về application state; đáp án đúng là A widget tree describing the UI." },
+      { "key": "B", "text": "A screen", "explanation": "build() trả về widget tree, không phải screen; đáp án đúng là A widget tree describing the UI." },
+      { "key": "C", "text": "A widget tree describing the UI", "explanation": "Phương thức build() trả về một cây widget mô tả giao diện người dùng cần hiển thị." },
+      { "key": "D", "text": "Rendered pixels", "explanation": "build() không trả về pixels; đáp án đúng là A widget tree describing the UI." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 115,
+    "question": "What is the primary role of widgets in Flutter?",
+    "options": [
+      { "key": "A", "text": "Compiling Dart code", "explanation": "Widgets không biên dịch Dart code; đáp án đúng là Describing the user interface." },
+      { "key": "B", "text": "Describing the user interface", "explanation": "Widget trong Flutter là đơn vị cơ bản để mô tả giao diện người dùng." },
+      { "key": "C", "text": "Handling network requests", "explanation": "Widgets không xử lý network requests; đáp án đúng là Describing the user interface." },
+      { "key": "D", "text": "Managing databases", "explanation": "Widgets không quản lý database; đáp án đúng là Describing the user interface." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 116,
+    "question": "Which Provider method listens for changes and rebuilds UI?",
+    "options": [
+      { "key": "A", "text": "listen()", "explanation": "listen() không tồn tại trong Provider API; đáp án đúng là watch()." },
+      { "key": "B", "text": "select()", "explanation": "select() dùng để lắng nghe một phần dữ liệu; đáp án đúng là watch()." },
+      { "key": "C", "text": "read()", "explanation": "read() đọc giá trị không lắng nghe thay đổi; đáp án đúng là watch()." },
+      { "key": "D", "text": "watch()", "explanation": "context.watch() lắng nghe thay đổi từ Provider và tự động rebuild UI khi có thay đổi." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 117,
+    "question": "Which Flutter package is commonly used for simple key-value storage?",
+    "options": [
+      { "key": "A", "text": "http", "explanation": "http dùng cho network requests; đáp án đúng là shared_preferences." },
+      { "key": "B", "text": "sqflite", "explanation": "sqflite dùng cho SQL database; đáp án đúng là shared_preferences." },
+      { "key": "C", "text": "provider", "explanation": "provider dùng cho state management; đáp án đúng là shared_preferences." },
+      { "key": "D", "text": "shared_preferences", "explanation": "shared_preferences là package phổ biến nhất để lưu trữ dữ liệu key-value đơn giản trong Flutter." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 118,
+    "question": "What is the role of the Expanded widget?",
+    "options": [
+      { "key": "A", "text": "Align widgets", "explanation": "Align widgets không phải chức năng của Expanded; đáp án đúng là Force a widget to take available space." },
+      { "key": "B", "text": "Add margin", "explanation": "Add margin không phải chức năng của Expanded; đáp án đúng là Force a widget to take available space." },
+      { "key": "C", "text": "Force a widget to take available space", "explanation": "Expanded buộc widget con chiếm hết không gian còn lại trong Row hoặc Column." },
+      { "key": "D", "text": "Fix widget size", "explanation": "Fix widget size không phải chức năng của Expanded; đáp án đúng là Force a widget to take available space." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 119,
+    "question": "Which method is used to update the UI when state changes?",
+    "options": [
+      { "key": "A", "text": "setState()", "explanation": "setState() thông báo cho Flutter biết state đã thay đổi và cần rebuild lại widget." },
+      { "key": "B", "text": "initState()", "explanation": "initState() chạy khi widget được tạo lần đầu; đáp án đúng là setState()." },
+      { "key": "C", "text": "dispose()", "explanation": "dispose() dọn dẹp tài nguyên khi widget bị xóa; đáp án đúng là setState()." },
+      { "key": "D", "text": "build()", "explanation": "build() được gọi để xây dựng UI, nhưng để kích hoạt rebuild cần gọi setState() trước." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 120,
+    "question": "What is the main advantage of using Provider?",
+    "options": [
+      { "key": "A", "text": "Faster rendering", "explanation": "Provider không trực tiếp cải thiện rendering speed; đáp án đúng là Simpler state sharing and management." },
+      { "key": "B", "text": "Simpler state sharing and management", "explanation": "Provider đơn giản hóa việc chia sẻ và quản lý state giữa các widget trong ứng dụng." },
+      { "key": "C", "text": "Better animations", "explanation": "Provider không liên quan đến animations; đáp án đúng là Simpler state sharing and management." },
+      { "key": "D", "text": "Improved navigation", "explanation": "Provider không cải thiện navigation; đáp án đúng là Simpler state sharing and management." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 121,
+    "question": "What does the decoration property in TextField allow?",
+    "options": [
+      { "key": "A", "text": "Change font size", "explanation": "Font size không phải chức năng của decoration; đáp án đúng là Add labels, icons, and hint text." },
+      { "key": "B", "text": "Manage state", "explanation": "Manage state không phải chức năng của decoration; đáp án đúng là Add labels, icons, and hint text." },
+      { "key": "C", "text": "Add labels, icons, and hint text", "explanation": "Thuộc tính decoration trong TextField (dùng InputDecoration) cho phép thêm label, icon, hint và border." },
+      { "key": "D", "text": "Control focus", "explanation": "Control focus không phải chức năng của decoration; đáp án đúng là Add labels, icons, and hint text." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 122,
+    "question": "What is the benefit of using named routes?",
+    "options": [
+      { "key": "A", "text": "Reduced memory usage", "explanation": "Named routes không giảm memory; đáp án đúng là Easier navigation management in large apps." },
+      { "key": "B", "text": "Easier navigation management in large apps", "explanation": "Named routes giúp quản lý navigation dễ dàng hơn trong app lớn bằng cách dùng tên thay vì tạo widget trực tiếp." },
+      { "key": "C", "text": "Better animations", "explanation": "Named routes không cải thiện animations; đáp án đúng là Easier navigation management in large apps." },
+      { "key": "D", "text": "Faster performance", "explanation": "Named routes không cải thiện performance; đáp án đúng là Easier navigation management in large apps." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 123,
+    "question": "What is the main purpose of app architecture?",
+    "options": [
+      { "key": "A", "text": "Improve animations", "explanation": "Architecture không trực tiếp cải thiện animations; đáp án đúng là Organize code structure." },
+      { "key": "B", "text": "Handle API", "explanation": "Handle API không phải mục đích chính của architecture; đáp án đúng là Organize code structure." },
+      { "key": "C", "text": "UI design", "explanation": "UI design không phải mục đích chính của architecture; đáp án đúng là Organize code structure." },
+      { "key": "D", "text": "Organize code structure", "explanation": "Kiến trúc ứng dụng (app architecture) giúp tổ chức cấu trúc code có hệ thống, dễ bảo trì và mở rộng." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 124,
+    "question": "What does a Dart class primarily represent?",
+    "options": [
+      { "key": "A", "text": "A network request", "explanation": "Class không đại diện cho network request; đáp án đúng là A blueprint for creating objects." },
+      { "key": "B", "text": "A database table", "explanation": "Class không chỉ đại diện cho database table; đáp án đúng là A blueprint for creating objects." },
+      { "key": "C", "text": "A UI widget only", "explanation": "Class không chỉ là UI widget; đáp án đúng là A blueprint for creating objects." },
+      { "key": "D", "text": "A blueprint for creating objects", "explanation": "Trong Dart, class là khuôn mẫu (blueprint) để tạo ra các đối tượng có cùng thuộc tính và phương thức." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 125,
+    "question": "What is the main purpose of control flow statements in Dart?",
+    "options": [
+      { "key": "A", "text": "To control the execution order of code", "explanation": "Control flow statements (if, for, while, switch) điều khiển thứ tự thực thi của code." },
+      { "key": "B", "text": "To handle network requests", "explanation": "Control flow không xử lý network requests; đáp án đúng là To control the execution order of code." },
+      { "key": "C", "text": "To store data permanently", "explanation": "Control flow không lưu trữ dữ liệu; đáp án đúng là To control the execution order of code." },
+      { "key": "D", "text": "To manage UI layout", "explanation": "Control flow không quản lý UI layout; đáp án đúng là To control the execution order of code." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 126,
+    "question": "What is the purpose of focusNode in a TextField?",
+    "options": [
+      { "key": "A", "text": "Handle validation", "explanation": "focusNode không xử lý validation; đáp án đúng là Control which widget has keyboard focus." },
+      { "key": "B", "text": "Control which widget has keyboard focus", "explanation": "FocusNode điều khiển widget nào đang có keyboard focus, cho phép lập trình viên request/release focus theo ý muốn." },
+      { "key": "C", "text": "Manage text value", "explanation": "Manage text value là chức năng của TextEditingController; đáp án đúng là Control which widget has keyboard focus." },
+      { "key": "D", "text": "Style the input", "explanation": "Style input dùng decoration; đáp án đúng là Control which widget has keyboard focus." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 127,
+    "question": "What is the main use of local storage in apps?",
+    "options": [
+      { "key": "A", "text": "Manage network hardware", "explanation": "Local storage không quản lý network hardware; đáp án đúng là Persist user settings and small data." },
+      { "key": "B", "text": "Compile code", "explanation": "Local storage không biên dịch code; đáp án đúng là Persist user settings and small data." },
+      { "key": "C", "text": "Persist user settings and small data", "explanation": "Local storage dùng để lưu trữ cài đặt người dùng và dữ liệu nhỏ trên thiết bị giữa các phiên." },
+      { "key": "D", "text": "Host web servers", "explanation": "Local storage không host web server; đáp án đúng là Persist user settings and small data." }
+    ],
+    "correctAnswer": "C"
+  },
+  {
+    "id": 128,
+    "question": "What benefit does using a centralized theme provide?",
+    "options": [
+      { "key": "A", "text": "Consistent UI appearance", "explanation": "Theme tập trung đảm bảo giao diện nhất quán trên toàn bộ app, dễ thay đổi và bảo trì." },
+      { "key": "B", "text": "Better state management", "explanation": "Centralized theme không cải thiện state management; đáp án đúng là Consistent UI appearance." },
+      { "key": "C", "text": "Reduced widget rebuilds", "explanation": "Centralized theme không giảm widget rebuilds; đáp án đúng là Consistent UI appearance." },
+      { "key": "D", "text": "Faster API calls", "explanation": "Centralized theme không cải thiện API calls; đáp án đúng là Consistent UI appearance." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 129,
+    "question": "What does context.read() do in Provider?",
+    "options": [
+      { "key": "A", "text": "Reads value without listening", "explanation": "context.read() đọc giá trị từ Provider một lần mà không đăng ký lắng nghe thay đổi." },
+      { "key": "B", "text": "Creates provider", "explanation": "context.read() không tạo provider; đáp án đúng là Reads value without listening." },
+      { "key": "C", "text": "Disposes provider", "explanation": "context.read() không dispose provider; đáp án đúng là Reads value without listening." },
+      { "key": "D", "text": "Listens to changes", "explanation": "Listens to changes là chức năng của context.watch(), không phải read(); đáp án đúng là Reads value without listening." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 130,
+    "question": "Why is understanding the widget lifecycle important?",
+    "options": [
+      { "key": "A", "text": "Deploy apps faster", "explanation": "Widget lifecycle không giúp deploy nhanh hơn; đáp án đúng là Manage UI updates correctly." },
+      { "key": "B", "text": "Reduce file size", "explanation": "Widget lifecycle không giảm file size; đáp án đúng là Manage UI updates correctly." },
+      { "key": "C", "text": "Improve API performance", "explanation": "Widget lifecycle không cải thiện API performance; đáp án đúng là Manage UI updates correctly." },
+      { "key": "D", "text": "Manage UI updates correctly", "explanation": "Hiểu vòng đời widget giúp quản lý đúng lúc khởi tạo, cập nhật và dọn dẹp tài nguyên UI." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 131,
+    "question": "What happens if a non-nullable variable is not initialized in Dart?",
+    "options": [
+      { "key": "A", "text": "A runtime exception occurs", "explanation": "Không phải runtime; Dart bắt lỗi tại compile-time; đáp án đúng là A compile-time error occurs." },
+      { "key": "B", "text": "The value becomes null automatically", "explanation": "Non-nullable variable không thể null; đáp án đúng là A compile-time error occurs." },
+      { "key": "C", "text": "The app runs normally", "explanation": "App sẽ không chạy được; đáp án đúng là A compile-time error occurs." },
+      { "key": "D", "text": "A compile-time error occurs", "explanation": "Dart null safety yêu cầu non-nullable variable phải được khởi tạo, nếu không sẽ báo lỗi compile-time." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 132,
+    "question": "What is the main purpose of the Container widget?",
+    "options": [
+      { "key": "A", "text": "Layout, styling, and positioning", "explanation": "Container kết hợp nhiều chức năng: đặt kích thước, thêm padding/margin, trang trí và định vị widget con." },
+      { "key": "B", "text": "Navigation", "explanation": "Container không xử lý navigation; đáp án đúng là Layout, styling, and positioning." },
+      { "key": "C", "text": "Network requests", "explanation": "Container không xử lý network; đáp án đúng là Layout, styling, and positioning." },
+      { "key": "D", "text": "State management", "explanation": "Container không quản lý state; đáp án đúng là Layout, styling, and positioning." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 133,
+    "question": "What does Navigator.pop() do?",
+    "options": [
+      { "key": "A", "text": "Close current screen", "explanation": "Navigator.pop() xóa màn hình hiện tại khỏi navigation stack, quay lại màn hình trước." },
+      { "key": "B", "text": "Clear stack", "explanation": "Clear stack không phải chức năng của Navigator.pop(); đáp án đúng là Close current screen." },
+      { "key": "C", "text": "Restart app", "explanation": "Navigator.pop() không restart app; đáp án đúng là Close current screen." },
+      { "key": "D", "text": "Open a new screen", "explanation": "Open new screen là chức năng của Navigator.push(); đáp án đúng là Close current screen." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 134,
+    "question": "What is the main benefit of Flutter's widget-based architecture?",
+    "options": [
+      { "key": "A", "text": "Widgets allow code reuse across platforms", "explanation": "Kiến trúc widget của Flutter cho phép tái sử dụng code trên nhiều nền tảng (iOS, Android, Web, Desktop)." },
+      { "key": "B", "text": "Widgets are only used for layout design", "explanation": "Widgets không chỉ dùng cho layout; đáp án đúng là Widgets allow code reuse across platforms." },
+      { "key": "C", "text": "Widgets automatically manage databases", "explanation": "Widgets không quản lý database; đáp án đúng là Widgets allow code reuse across platforms." },
+      { "key": "D", "text": "Widgets replace backend services", "explanation": "Widgets không thay thế backend; đáp án đúng là Widgets allow code reuse across platforms." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 135,
+    "question": "What is a route in Flutter?",
+    "options": [
+      { "key": "A", "text": "An abstraction for a screen or page", "explanation": "Trong Flutter, route là khái niệm trừu tượng đại diện cho một màn hình hoặc trang trong navigation stack." },
+      { "key": "B", "text": "A network request", "explanation": "Route không phải network request; đáp án đúng là An abstraction for a screen or page." },
+      { "key": "C", "text": "A theme configuration", "explanation": "Route không phải theme; đáp án đúng là An abstraction for a screen or page." },
+      { "key": "D", "text": "A database path", "explanation": "Route không phải database path; đáp án đúng là An abstraction for a screen or page." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 136,
+    "question": "What is the role of the Consumer widget in Provider?",
+    "options": [
+      { "key": "A", "text": "Listen and rebuild specific parts of the UI", "explanation": "Consumer lắng nghe Provider và chỉ rebuild phần UI bên trong nó, giúp tối ưu hiệu năng." },
+      { "key": "B", "text": "Create state", "explanation": "Consumer không tạo state; đáp án đúng là Listen and rebuild specific parts of the UI." },
+      { "key": "C", "text": "Manage navigation", "explanation": "Consumer không quản lý navigation; đáp án đúng là Listen and rebuild specific parts of the UI." },
+      { "key": "D", "text": "Define themes", "explanation": "Consumer không định nghĩa themes; đáp án đúng là Listen and rebuild specific parts of the UI." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 137,
+    "question": "What is the main benefit of using Maps in Dart?",
+    "options": [
+      { "key": "A", "text": "Storing key-value pairs", "explanation": "Map trong Dart cho phép lưu trữ dữ liệu theo cặp key-value, tra cứu nhanh theo key." },
+      { "key": "B", "text": "Rendering UI components", "explanation": "Map không dùng để render UI; đáp án đúng là Storing key-value pairs." },
+      { "key": "C", "text": "Managing asynchronous tasks", "explanation": "Map không quản lý async tasks; đáp án đúng là Storing key-value pairs." },
+      { "key": "D", "text": "Storing values without keys", "explanation": "Storing without keys là đặc điểm của List, không phải Map; đáp án đúng là Storing key-value pairs." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 138,
+    "question": "Which control structure is used to repeat a block of code in Dart?",
+    "options": [
+      { "key": "A", "text": "if", "explanation": "if dùng cho điều kiện, không phải lặp; đáp án đúng là for." },
+      { "key": "B", "text": "for", "explanation": "Vòng lặp for (cùng với while, do-while) dùng để lặp lại một khối code trong Dart." },
+      { "key": "C", "text": "switch", "explanation": "switch dùng cho nhiều điều kiện; đáp án đúng là for." },
+      { "key": "D", "text": "try", "explanation": "try dùng để xử lý ngoại lệ; đáp án đúng là for." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 139,
+    "question": "What is the primary purpose of the Dart programming language in Flutter?",
+    "options": [
+      { "key": "A", "text": "Building user interfaces and application logic", "explanation": "Dart là ngôn ngữ chính của Flutter, dùng để xây dựng cả UI và logic nghiệp vụ của ứng dụng." },
+      { "key": "B", "text": "Running backend servers", "explanation": "Dart trong Flutter không dùng cho backend servers; đáp án đúng là Building user interfaces and application logic." },
+      { "key": "C", "text": "Handling operating system processes", "explanation": "Dart không xử lý OS processes; đáp án đúng là Building user interfaces and application logic." },
+      { "key": "D", "text": "Managing databases", "explanation": "Dart không chuyên quản lý database; đáp án đúng là Building user interfaces and application logic." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 140,
+    "question": "What is the purpose of the path_provider package?",
+    "options": [
+      { "key": "A", "text": "Manage network paths", "explanation": "path_provider không quản lý network paths; đáp án đúng là Find commonly used locations on the host file system." },
+      { "key": "B", "text": "Find commonly used locations on the host file system", "explanation": "path_provider cung cấp các đường dẫn đến thư mục phổ biến như Documents, Temp trên hệ thống file của thiết bị." },
+      { "key": "C", "text": "Encrypt data", "explanation": "path_provider không mã hóa dữ liệu; đáp án đúng là Find commonly used locations on the host file system." },
+      { "key": "D", "text": "Style the UI", "explanation": "path_provider không style UI; đáp án đúng là Find commonly used locations on the host file system." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 141,
+    "question": "What is the main role of Navigator in Flutter?",
+    "options": [
+      { "key": "A", "text": "State management", "explanation": "Navigator không quản lý state; đáp án đúng là Screen navigation." },
+      { "key": "B", "text": "Theme management", "explanation": "Navigator không quản lý theme; đáp án đúng là Screen navigation." },
+      { "key": "C", "text": "API calls", "explanation": "Navigator không thực hiện API calls; đáp án đúng là Screen navigation." },
+      { "key": "D", "text": "Screen navigation", "explanation": "Navigator quản lý navigation stack và điều hướng giữa các màn hình trong Flutter app." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 142,
+    "question": "What is an API timeout used for?",
+    "options": [
+      { "key": "A", "text": "Prevent waiting indefinitely", "explanation": "API timeout giới hạn thời gian chờ response, tránh app bị treo khi server không phản hồi." },
+      { "key": "B", "text": "Speed up UI", "explanation": "API timeout không trực tiếp speed up UI; đáp án đúng là Prevent waiting indefinitely." },
+      { "key": "C", "text": "Encrypt data", "explanation": "API timeout không mã hóa dữ liệu; đáp án đúng là Prevent waiting indefinitely." },
+      { "key": "D", "text": "Retry requests", "explanation": "API timeout không tự retry; đáp án đúng là Prevent waiting indefinitely." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 143,
+    "question": "What is the purpose of onSaved callback?",
+    "options": [
+      { "key": "A", "text": "Reset form", "explanation": "onSaved không reset form; đáp án đúng là Store form values." },
+      { "key": "B", "text": "Display errors", "explanation": "Display errors là chức năng của validator; đáp án đúng là Store form values." },
+      { "key": "C", "text": "Validate input", "explanation": "Validate input là chức năng của validator; đáp án đúng là Store form values." },
+      { "key": "D", "text": "Store form values", "explanation": "onSaved callback được gọi khi form.save() được gọi, dùng để lưu giá trị của các field." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 144,
+    "question": "What is the primary responsibility of the setState() method?",
+    "options": [
+      { "key": "A", "text": "Trigger widget rebuild", "explanation": "setState() thông báo Flutter rằng state đã thay đổi và cần rebuild lại widget để phản ánh thay đổi đó." },
+      { "key": "B", "text": "Handle async tasks", "explanation": "setState() không xử lý async tasks; đáp án đúng là Trigger widget rebuild." },
+      { "key": "C", "text": "Persist data", "explanation": "setState() không lưu trữ dữ liệu; đáp án đúng là Trigger widget rebuild." },
+      { "key": "D", "text": "Navigate screens", "explanation": "setState() không điều hướng màn hình; đáp án đúng là Trigger widget rebuild." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 145,
+    "question": "What is Dart primarily designed for in the Flutter ecosystem?",
+    "options": [
+      { "key": "A", "text": "General-purpose programming with UI focus", "explanation": "Dart được thiết kế cho lập trình đa mục đích với trọng tâm là phát triển UI, đặc biệt trong hệ sinh thái Flutter." },
+      { "key": "B", "text": "Network security", "explanation": "Network security không phải mục đích chính của Dart; đáp án đúng là General-purpose programming with UI focus." },
+      { "key": "C", "text": "User interface development", "explanation": "UI development là một phần, nhưng Dart cũng hỗ trợ general-purpose programming; đáp án đúng là General-purpose programming with UI focus." },
+      { "key": "D", "text": "Database management", "explanation": "Database management không phải mục đích chính của Dart; đáp án đúng là General-purpose programming with UI focus." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 146,
+    "question": "How is the Flutter UI constructed internally?",
+    "options": [
+      { "key": "A", "text": "Using native UI components only", "explanation": "Flutter không dùng native UI components; đáp án đúng là Using a hierarchical widget tree." },
+      { "key": "B", "text": "Using XML layout files", "explanation": "Flutter không dùng XML; đáp án đúng là Using a hierarchical widget tree." },
+      { "key": "C", "text": "Using HTML and CSS", "explanation": "Flutter không dùng HTML/CSS; đáp án đúng là Using a hierarchical widget tree." },
+      { "key": "D", "text": "Using a hierarchical widget tree", "explanation": "Flutter xây dựng UI thông qua cây widget phân cấp (hierarchical widget tree), tự render bằng Skia/Impeller engine." }
+    ],
+    "correctAnswer": "D"
+  },
+  {
+    "id": 147,
+    "question": "What is the main difference between StatelessWidget and StatefulWidget?",
+    "options": [
+      { "key": "A", "text": "Performance", "explanation": "Performance không phải sự khác biệt chính; đáp án đúng là Ability to hold mutable state." },
+      { "key": "B", "text": "Ability to hold mutable state", "explanation": "StatefulWidget có thể lưu trữ mutable state (thay đổi được), StatelessWidget thì không." },
+      { "key": "C", "text": "Platform compatibility", "explanation": "Platform compatibility không phải sự khác biệt; đáp án đúng là Ability to hold mutable state." },
+      { "key": "D", "text": "Rendering engine", "explanation": "Cả hai đều dùng cùng rendering engine; đáp án đúng là Ability to hold mutable state." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 148,
+    "question": "What happens if local storage fails?",
+    "options": [
+      { "key": "A", "text": "Fallback logic is required", "explanation": "Khi local storage thất bại, ứng dụng cần có fallback logic để xử lý tình huống và tránh crash." },
+      { "key": "B", "text": "Data syncs", "explanation": "Data không tự sync khi storage fail; đáp án đúng là Fallback logic is required." },
+      { "key": "C", "text": "App crashes", "explanation": "App không nhất thiết phải crash nếu có xử lý lỗi đúng; đáp án đúng là Fallback logic is required." },
+      { "key": "D", "text": "UI freezes", "explanation": "UI không nhất thiết freeze; đáp án đúng là Fallback logic is required." }
+    ],
+    "correctAnswer": "A"
+  },
+  {
+    "id": 149,
+    "question": "When should you prefer Provider over setState()?",
+    "options": [
+      { "key": "A", "text": "For simple UI updates", "explanation": "Simple UI updates phù hợp với setState(); đáp án đúng là For global or shared state." },
+      { "key": "B", "text": "For global or shared state", "explanation": "Provider phù hợp khi state cần chia sẻ giữa nhiều widget hoặc cần quản lý state ở cấp độ toàn app." },
+      { "key": "C", "text": "For navigation", "explanation": "Provider không thay thế Navigator; đáp án đúng là For global or shared state." },
+      { "key": "D", "text": "For animations", "explanation": "Provider không liên quan đến animations; đáp án đúng là For global or shared state." }
+    ],
+    "correctAnswer": "B"
+  },
+  {
+    "id": 150,
+    "question": "What is the main advantage of Navigator 2.0?",
+    "options": [
+      { "key": "A", "text": "Simpler code", "explanation": "Navigator 2.0 thực ra phức tạp hơn 1.0; đáp án đúng là Better control over the navigation stack." },
+      { "key": "B", "text": "Faster rendering", "explanation": "Navigator 2.0 không cải thiện rendering; đáp án đúng là Better control over the navigation stack." },
+      { "key": "C", "text": "Automatic themes", "explanation": "Navigator 2.0 không liên quan đến themes; đáp án đúng là Better control over the navigation stack." },
+      { "key": "D", "text": "Better control over the navigation stack", "explanation": "Navigator 2.0 cung cấp API declarative cho phép kiểm soát navigation stack chi tiết hơn, hỗ trợ deep linking và web routing." }
+    ],
+    "correctAnswer": "D"
   }
 ];
 
