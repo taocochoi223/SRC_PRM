@@ -183,6 +183,7 @@ button { border: 0; }
 .flashcard-mode { background: linear-gradient(135deg, #02569b, #087bc9); }
 .library-mode { background: linear-gradient(135deg, #123b5c, #17648a); }
 .learn-mode { background: linear-gradient(135deg, #5b21b6, #7c3aed); }
+.learn2-mode { background: linear-gradient(135deg, #9d174d, #db2777); }
 .study-mode-grid--3 { grid-template-columns: 1fr 1fr 1fr; }
 .study-mode-icon {
   width: 58px; height: 58px; display: grid; place-items: center; border-radius: 17px;

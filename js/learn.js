@@ -61,7 +61,8 @@
   "use strict";
 
   /* ── CONFIG ── */
-  const STORAGE_KEY  = "prmLearnProgress";   // lưu tiến trình
+  const customConfig = window.LEARN_CONFIG || {};
+  const STORAGE_KEY  = customConfig.storageKey || "prmLearnProgress";   // lưu tiến trình
   const THEME_KEY    = "flutterQuizTheme";   // lưu chế độ tối/sáng
   const DISTRACTORS  = 3;                    // số đáp án sai đi kèm
   const AUTO_NEXT_MS = 900;                  // ms tự động qua câu khi đúng
@@ -178,7 +179,9 @@
   let answered     = false;  // đã chọn đáp án chưa?
   let autoTimer    = null;
 
-  const allQuestions = questions; // từ questions.js
+  const allQuestions = (typeof customConfig.startIdx === "number" && typeof customConfig.endIdx === "number")
+    ? questions.slice(customConfig.startIdx, customConfig.endIdx)
+    : questions; // từ questions.js
 
   /* Map để tra nhanh */
   const qMap = new Map(allQuestions.map((q) => [q.id, q]));
