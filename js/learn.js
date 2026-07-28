@@ -1,6 +1,6 @@
 /* ── PASSWORD GATE ── */
 (() => {
-  const CORRECT   = "trí đẹp trai";          // so sánh lowercase
+  const CORRECT   = ["quí sờ tộc", "quý sờ tộc", "qui so toc", "quy so toc"]; // so sánh lowercase, hỗ trợ cả i/y và có/không dấu
   const SESSION_K = "prmLearnUnlocked";
   const gate      = document.getElementById("password-gate");
   const pwInput   = document.getElementById("pw-input");
@@ -28,7 +28,7 @@
 
   const check = () => {
     const val = (pwInput.value || "").trim().toLowerCase();
-    if (val === CORRECT) {
+    if (CORRECT.includes(val)) {
       pwError.style.display = "none";
       pwInput.style.borderColor = "#4ade80";
       setTimeout(unlock, 200);
