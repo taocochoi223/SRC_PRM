@@ -106,9 +106,9 @@ body.dark-mode .learn-progress-seg.active {
   box-shadow: 0 0 8px rgba(2, 86, 155, 0.5);
 }
 
-/* Shell - Mở rộng cho màn hình bự 980px */
+/* Shell - Mở rộng cho màn hình bự */
 .learn-shell {
-  width: min(980px, calc(100% - 48px));
+  width: min(1200px, calc(100% - 32px));
   margin: 0 auto;
   padding: 105px 0 130px;
   flex: 1;
