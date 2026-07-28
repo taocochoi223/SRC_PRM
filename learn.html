@@ -83,7 +83,32 @@
 
   </main>
 
+  <!-- Batch Review Modal (ôn tập sau mỗi chặng) -->
+  <div class="batch-review-backdrop" id="batch-review-modal" hidden>
+    <div class="batch-review-panel">
+      <div class="batch-review-header">
+        <div class="batch-review-title-area">
+          <span class="batch-review-icon">📋</span>
+          <div>
+            <h2 class="batch-review-title" id="batch-review-title">Ôn tập chặng 1</h2>
+            <p class="batch-review-subtitle" id="batch-review-subtitle">Xem lại toàn bộ câu hỏi và đáp án đúng</p>
+          </div>
+        </div>
+        <button class="batch-review-close" id="batch-review-close" type="button" aria-label="Đóng">✕</button>
+      </div>
+      <div class="batch-review-body" id="batch-review-body">
+        <!-- filled by JS -->
+      </div>
+      <div class="batch-review-footer">
+        <button class="btn btn-primary batch-review-next" id="batch-review-next" type="button">
+          Tiếp tục học <span>→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Complete modal -->
+
   <div class="modal-backdrop" id="learn-complete-modal" hidden>
     <section class="modal learn-complete-modal-box" role="dialog" aria-modal="true" aria-labelledby="learn-complete-title">
       <div class="modal-icon">✓</div>

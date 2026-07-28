@@ -419,22 +419,90 @@
           return;
         }
 
-        // Bước sang chặng 7 câu tiếp theo
-        queue = pendingIds.slice(0, BATCH_SIZE);
-        pendingIds = pendingIds.slice(BATCH_SIZE);
-        currentBatchTotal = queue.length;
-        round++;
-        qIndex = 0;
-        batchWrongIds = [];
-        isBatchRetry = false;
-        saveState();
-        renderQuestion();
+        // Hiển thị màn hình ôn tập chặng trước khi sang chặng mới
+        const finishedBatchIds = [...queue]; // lưu lại ids của chặng vừa xong
+        const nextQueue = pendingIds.slice(0, BATCH_SIZE);
+        const nextPending = pendingIds.slice(BATCH_SIZE);
+        showBatchReview(finishedBatchIds, round, () => {
+          queue = nextQueue;
+          pendingIds = nextPending;
+          currentBatchTotal = queue.length;
+          round++;
+          qIndex = 0;
+          batchWrongIds = [];
+          isBatchRetry = false;
+          saveState();
+          renderQuestion();
+        });
       } else {
         qIndex = nextIndex;
         saveState();
         renderQuestion();
       }
     }, 230);
+  };
+
+  /* ── BATCH REVIEW ── */
+  const showBatchReview = (batchIds, batchRound, onContinue) => {
+    const elModal = document.querySelector("#batch-review-modal");
+    const elBody  = document.querySelector("#batch-review-body");
+    const elTitle = document.querySelector("#batch-review-title");
+    const elSub   = document.querySelector("#batch-review-subtitle");
+    if (!elModal || !elBody) { onContinue(); return; }
+
+    elTitle.textContent = `Ôn tập Chặng ${batchRound}`;
+    elSub.textContent   = `Đã hoàn thành ${batchIds.length} câu — Xem lại đáp án đúng và giải thích`;
+
+    // Build HTML cho từng câu trong chặng
+    elBody.innerHTML = batchIds.map((id, idx) => {
+      const q = qMap.get(id);
+      if (!q) return "";
+      const wasWrong = wrongIds.includes(id);
+      const correctOpt = q.options.find(o => o.key === q.correctAnswer);
+
+      const optionsHtml = q.options.map(opt => {
+        const isCorrect = opt.key === q.correctAnswer;
+        return `
+          <div class="br-option${isCorrect ? ' is-correct' : ''}">
+            <span class="br-key">${escHtml(opt.key)}</span>
+            <span>${escHtml(opt.text)}${isCorrect ? ' <strong>✓</strong>' : ''}</span>
+          </div>`;
+      }).join("");
+
+      const explanationHtml = correctOpt?.explanation
+        ? `<div class="br-explanation"><strong>Giải thích:</strong> ${escHtml(correctOpt.explanation)}</div>`
+        : "";
+
+      return `
+        <div class="br-item${wasWrong ? ' was-wrong' : ''}">
+          <div class="br-item-header">
+            <span class="br-num">${String(idx + 1).padStart(2, '0')}</span>
+            <p class="br-question">${escHtml(q.question)}</p>
+          </div>
+          <div class="br-options">${optionsHtml}</div>
+          ${explanationHtml}
+        </div>`;
+    }).join("");
+
+    // Hiện modal
+    elModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    elBody.scrollTop = 0;
+
+    // Nút Tiếp tục
+    const elNext  = document.querySelector("#batch-review-next");
+    const elClose = document.querySelector("#batch-review-close");
+    const closeReview = () => {
+      elModal.hidden = true;
+      document.body.style.overflow = "";
+      onContinue();
+    };
+    const nextClone  = elNext.cloneNode(true);
+    const closeClone = elClose.cloneNode(true);
+    elNext.replaceWith(nextClone);
+    elClose.replaceWith(closeClone);
+    nextClone.addEventListener("click", closeReview);
+    closeClone.addEventListener("click", closeReview);
   };
 
   /* ── COMPLETE ── */
