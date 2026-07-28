@@ -454,38 +454,48 @@
     elSub.textContent   = `Đã hoàn thành ${batchIds.length} câu — Xem lại đáp án đúng và giải thích`;
 
     // Build HTML cho từng câu trong chặng
-    elBody.innerHTML = batchIds.map((id, idx) => {
+    const parts = [];
+    batchIds.forEach((id, idx) => {
       const q = qMap.get(id);
-      if (!q) return "";
+      if (!q) return;
       const wasWrong = wrongIds.includes(id);
       const correctOpt = q.options.find(o => o.key === q.correctAnswer);
 
-      const optionsHtml = q.options.map(opt => {
+      let optHtml = "";
+      q.options.forEach(opt => {
         const isCorrect = opt.key === q.correctAnswer;
-        return `
-          <div class="br-option${isCorrect ? ' is-correct' : ''}">
-            <span class="br-key">${escHtml(opt.key)}</span>
-            <span>${escHtml(opt.text)}${isCorrect ? ' <strong>✓</strong>' : ''}</span>
-          </div>`;
-      }).join("");
+        const cls = isCorrect ? " is-correct" : "";
+        const tick = isCorrect ? " <strong>✓</strong>" : "";
+        optHtml += '<div class="br-option' + cls + '">'
+          + '<span class="br-key">' + escHtml(opt.key) + "</span>"
+          + "<span>" + escHtml(opt.text) + tick + "</span>"
+          + "</div>";
+      });
 
-      const explanationHtml = correctOpt?.explanation
-        ? `<div class="br-explanation"><strong>Giải thích:</strong> ${escHtml(correctOpt.explanation)}</div>`
-        : "";
+      let expHtml = "";
+      if (correctOpt && correctOpt.explanation) {
+        expHtml = '<div class="br-explanation"><strong>Giải thích:</strong> '
+          + escHtml(correctOpt.explanation) + "</div>";
+      }
 
-      return `
-        <div class="br-item${wasWrong ? ' was-wrong' : ''}">
-          <div class="br-item-header">
-            <span class="br-num">${String(idx + 1).padStart(2, '0')}</span>
-            <p class="br-question">${escHtml(q.question)}</p>
-          </div>
-          <div class="br-options">${optionsHtml}</div>
-          ${explanationHtml}
-        </div>`;
-    }).join("");
+      const wrongCls = wasWrong ? " was-wrong" : "";
+      const numStr = String(idx + 1).padStart(2, "0");
+      parts.push(
+        '<div class="br-item' + wrongCls + '">'
+          + '<div class="br-item-header">'
+            + '<span class="br-num">' + numStr + "</span>"
+            + '<p class="br-question">' + escHtml(q.question) + "</p>"
+          + "</div>"
+          + '<div class="br-options">' + optHtml + "</div>"
+          + expHtml
+        + "</div>"
+      );
+    });
+    elBody.innerHTML = parts.join("");
 
-    // Hiện modal
-    elModal.hidden = false;
+    // Hiện modal (dùng class thay vì hidden để không override display:flex)
+    elModal.removeAttribute("hidden");
+    elModal.style.display = "flex";
     document.body.style.overflow = "hidden";
     elBody.scrollTop = 0;
 
@@ -493,7 +503,8 @@
     const elNext  = document.querySelector("#batch-review-next");
     const elClose = document.querySelector("#batch-review-close");
     const closeReview = () => {
-      elModal.hidden = true;
+      elModal.style.display = "none";
+      elModal.setAttribute("hidden", "");
       document.body.style.overflow = "";
       onContinue();
     };
