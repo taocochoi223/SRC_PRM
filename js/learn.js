@@ -453,45 +453,72 @@
     elTitle.textContent = `Ôn tập Chặng ${batchRound}`;
     elSub.textContent   = `Đã hoàn thành ${batchIds.length} câu — Xem lại đáp án đúng và giải thích`;
 
-    // Build HTML cho từng câu trong chặng
-    const parts = [];
+    // Build DOM trực tiếp để đảm bảo luôn hiển thị đúng
+    elBody.innerHTML = "";
     batchIds.forEach((id, idx) => {
       const q = qMap.get(id);
       if (!q) return;
-      const wasWrong = wrongIds.includes(id);
       const correctOpt = q.options.find(o => o.key === q.correctAnswer);
+      const wasWrong   = wrongIds.includes(id);
 
-      let optHtml = "";
+      // Wrapper card
+      const card = document.createElement("div");
+      card.className = "br-item" + (wasWrong ? " was-wrong" : "");
+
+      // Header (số + câu hỏi)
+      const header = document.createElement("div");
+      header.className = "br-item-header";
+
+      const numBadge = document.createElement("span");
+      numBadge.className = "br-num";
+      numBadge.textContent = String(idx + 1).padStart(2, "0");
+
+      const qText = document.createElement("p");
+      qText.className = "br-question";
+      qText.textContent = q.question;
+
+      header.appendChild(numBadge);
+      header.appendChild(qText);
+      card.appendChild(header);
+
+      // Options grid
+      const optGrid = document.createElement("div");
+      optGrid.className = "br-options";
+
       q.options.forEach(opt => {
         const isCorrect = opt.key === q.correctAnswer;
-        const cls = isCorrect ? " is-correct" : "";
-        const tick = isCorrect ? " <strong>✓</strong>" : "";
-        optHtml += '<div class="br-option' + cls + '">'
-          + '<span class="br-key">' + escHtml(opt.key) + "</span>"
-          + "<span>" + escHtml(opt.text) + tick + "</span>"
-          + "</div>";
-      });
+        const optEl = document.createElement("div");
+        optEl.className = "br-option" + (isCorrect ? " is-correct" : "");
 
-      let expHtml = "";
+        const keyBadge = document.createElement("span");
+        keyBadge.className = "br-key";
+        keyBadge.textContent = opt.key;
+
+        const optText = document.createElement("span");
+        optText.textContent = opt.text;
+
+        if (isCorrect) {
+          const tick = document.createElement("strong");
+          tick.textContent = " ✓";
+          optText.appendChild(tick);
+        }
+
+        optEl.appendChild(keyBadge);
+        optEl.appendChild(optText);
+        optGrid.appendChild(optEl);
+      });
+      card.appendChild(optGrid);
+
+      // Giải thích (nếu có)
       if (correctOpt && correctOpt.explanation) {
-        expHtml = '<div class="br-explanation"><strong>Giải thích:</strong> '
-          + escHtml(correctOpt.explanation) + "</div>";
+        const expEl = document.createElement("div");
+        expEl.className = "br-explanation";
+        expEl.innerHTML = "<strong>Giải thích:</strong> " + escHtml(correctOpt.explanation);
+        card.appendChild(expEl);
       }
 
-      const wrongCls = wasWrong ? " was-wrong" : "";
-      const numStr = String(idx + 1).padStart(2, "0");
-      parts.push(
-        '<div class="br-item' + wrongCls + '">'
-          + '<div class="br-item-header">'
-            + '<span class="br-num">' + numStr + "</span>"
-            + '<p class="br-question">' + escHtml(q.question) + "</p>"
-          + "</div>"
-          + '<div class="br-options">' + optHtml + "</div>"
-          + expHtml
-        + "</div>"
-      );
+      elBody.appendChild(card);
     });
-    elBody.innerHTML = parts.join("");
 
     // Hiện modal (dùng class thay vì hidden để không override display:flex)
     elModal.removeAttribute("hidden");
