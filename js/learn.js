@@ -97,6 +97,7 @@
   let wrong        = 0;  // tổng sai trong toàn phiên
   let wrongIds     = []; // toàn bộ ids từng sai (để có thể ôn lại cuối phiên)
   let batchWrongIds= []; // các ids sai TRONG chặng 7 câu hiện tại (để lặp lại ngay lập tức)
+  let batchAllIds  = []; // toàn bộ ids của chặng hiện tại (để review đầy đủ)
   let currentBatchTotal = 7; // tổng số câu của chặng ban đầu
   let isBatchRetry = false;  // đang ở chế độ làm lại các câu sai của chặng hiện tại?
   let answered     = false;  // đã chọn đáp án chưa?
@@ -137,6 +138,7 @@
         wrong        = s.wrong   || 0;
         wrongIds     = s.wrongIds || [];
         batchWrongIds= s.batchWrongIds || [];
+        batchAllIds  = s.batchAllIds || [...queue]; // restore hoặc fallback sang queue
         isBatchRetry = s.isBatchRetry || false;
         return;
       }
@@ -146,7 +148,7 @@
 
   const saveState = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      queue, pendingIds, completedCount, qIndex, round, correct, wrong, wrongIds, batchWrongIds, currentBatchTotal, isBatchRetry
+      queue, pendingIds, completedCount, qIndex, round, correct, wrong, wrongIds, batchWrongIds, batchAllIds, currentBatchTotal, isBatchRetry
     }));
   };
 
@@ -155,6 +157,7 @@
       ? allQuestions.map((q) => q.id).sort((a, b) => a - b)
       : shuffle(allQuestions.map((q) => q.id));
     queue            = ids.slice(0, BATCH_SIZE);
+    batchAllIds      = [...queue]; // ghi nhớ đầy đủ câu của chặng đầu tiên
     pendingIds       = ids.slice(BATCH_SIZE);
     completedCount   = 0;
     currentBatchTotal= queue.length;
@@ -169,9 +172,9 @@
   };
 
   const startReviewRound = () => {
-    // Chỉ ôn lại toàn bộ những câu từng trả lời sai
     const allMissed = shuffle([...new Set(wrongIds)]);
     queue            = allMissed.slice(0, BATCH_SIZE);
+    batchAllIds      = [...queue]; // ghi nhớ đầy đủ câu của chặng ôn tập
     pendingIds       = allMissed.slice(BATCH_SIZE);
     completedCount   = 0;
     currentBatchTotal= queue.length;
@@ -399,7 +402,7 @@
       if (nextIndex >= queue.length) {
         // Hết chặng / chùm 7 câu hiện tại
         if (batchWrongIds.length > 0) {
-          // ⚠️ Có câu trả lời sai trong chặng 7 câu này -> Lặp lại ngay lập tức các câu sai đó cho đến khi thuộc (đúng hết)!
+          // ⚠️ Có câu trả lời sai -> Lặp lại ngay lập tức các câu sai cho đến khi đúng hết!
           queue = shuffle([...batchWrongIds]);
           batchWrongIds = [];
           qIndex = 0;
@@ -409,22 +412,23 @@
           return;
         }
 
-        // ✅ Đã hoàn thành hoàn hảo chặng 7 câu hiện tại!
+        // ✅ Đã hoàn thành hoàn hảo chặng hiện tại!
         completedCount += currentBatchTotal;
 
         if (pendingIds.length === 0) {
-          // Đã hoàn thành trọn vẹn toàn bộ các câu hỏi trong khóa!
+          // Đã hoàn thành trọn vẹn toàn bộ!
           renderProgressBar(true);
           showComplete();
           return;
         }
 
-        // Hiển thị màn hình ôn tập chặng trước khi sang chặng mới
-        const finishedBatchIds = [...queue]; // lưu lại ids của chặng vừa xong
+        // Hiển thị màn hình ôn tập chặng (dùng batchAllIds để show ĐẦY ĐỦ tất cả câu)
+        const reviewIds = batchAllIds.length > 0 ? [...batchAllIds] : [...queue];
         const nextQueue = pendingIds.slice(0, BATCH_SIZE);
         const nextPending = pendingIds.slice(BATCH_SIZE);
-        showBatchReview(finishedBatchIds, round, () => {
+        showBatchReview(reviewIds, round, () => {
           queue = nextQueue;
+          batchAllIds = [...nextQueue]; // cập nhật cho chặng mới
           pendingIds = nextPending;
           currentBatchTotal = queue.length;
           round++;
