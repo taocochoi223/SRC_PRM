@@ -62,8 +62,24 @@
 
   /* ── CONFIG ── */
   const STORAGE_KEY  = "prmLearnProgress";   // lưu tiến trình
+  const THEME_KEY    = "flutterQuizTheme";   // lưu chế độ tối/sáng
   const DISTRACTORS  = 3;                    // số đáp án sai đi kèm
   const AUTO_NEXT_MS = 900;                  // ms tự động qua câu khi đúng
+
+  /* ── THEME INITIALIZATION ── */
+  const elThemeBtn = document.querySelector("#btn-theme");
+  if (localStorage.getItem(THEME_KEY) === "dark") {
+    document.body.classList.add("dark-mode");
+    if (elThemeBtn) elThemeBtn.textContent = "☀";
+  }
+  if (elThemeBtn) {
+    elThemeBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      const isDark = document.body.classList.contains("dark-mode");
+      localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
+      elThemeBtn.textContent = isDark ? "☀" : "☾";
+    });
+  }
 
   /* ── HELPERS ── */
   const $ = (sel) => document.querySelector(sel);
@@ -535,19 +551,22 @@
       if (!q) return;
       const correctOpt = q.options.find(o => o.key === q.correctAnswer);
       const wasWrong   = wrongIds.includes(id);
-      const borderClr  = wasWrong ? "#fca5a5" : "#e2e8f0";
-      const hdrBg      = wasWrong ? "#fff1f2" : "#f8fafc";
-      const numBg      = wasWrong ? "#fee2e2" : "#dbeafe";
-      const numClr     = wasWrong ? "#dc2626" : "#1d4ed8";
+      const isDark     = document.body.classList.contains("dark-mode");
+      const cardBg     = isDark ? "#13283a" : "#fff";
+      const txtClr     = isDark ? "#edf6ff" : "#0f172a";
+      const borderClr  = wasWrong ? (isDark ? "#7f1d1d" : "#fca5a5") : (isDark ? "#294155" : "#e2e8f0");
+      const hdrBg      = wasWrong ? (isDark ? "#451a1d" : "#fff1f2") : (isDark ? "#0c1d2b" : "#f8fafc");
+      const numBg      = wasWrong ? (isDark ? "#7f1d1d" : "#fee2e2") : (isDark ? "#173c58" : "#dbeafe");
+      const numClr     = wasWrong ? (isDark ? "#fca5a5" : "#dc2626") : (isDark ? "#7db8e8" : "#1d4ed8");
 
       let optsHtml = "";
       q.options.forEach(opt => {
         const ok  = opt.key === q.correctAnswer;
-        const bg  = ok ? "#dcfce7" : "#f8fafc";
-        const brd = ok ? "#16a34a" : "#e2e8f0";
-        const fg  = ok ? "#14532d" : "#374151";
-        const kbg = ok ? "#16a34a" : "#e5e7eb";
-        const kfg = ok ? "#fff"    : "#6b7280";
+        const bg  = ok ? (isDark ? "#064e3b" : "#dcfce7") : (isDark ? "#0c1d2b" : "#f8fafc");
+        const brd = ok ? (isDark ? "#10b981" : "#16a34a") : (isDark ? "#294155" : "#e2e8f0");
+        const fg  = ok ? (isDark ? "#6ee7b7" : "#14532d") : (isDark ? "#edf6ff" : "#374151");
+        const kbg = ok ? (isDark ? "#10b981" : "#16a34a") : (isDark ? "#294155" : "#e5e7eb");
+        const kfg = ok ? "#fff"    : (isDark ? "#a8b8c8" : "#6b7280");
         const fw  = ok ? "700"     : "500";
         const lbl = ok ? escHtml(opt.text) + " <b>✓</b>" : escHtml(opt.text);
         optsHtml += `<div style="display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:10px;border:1.5px solid ${brd};background:${bg};margin-bottom:8px;box-sizing:border-box">
@@ -557,16 +576,16 @@
       });
 
       const expHtml = (correctOpt && correctOpt.explanation)
-        ? `<div style="margin-top:6px;padding:10px 14px;border-radius:8px;background:#eff6ff;border-left:3px solid #3b82f6;font-size:12px;color:#1e40af;line-height:1.6">
+        ? `<div style="margin-top:6px;padding:10px 14px;border-radius:8px;background:${isDark ? "rgba(2,86,155,0.18)" : "#eff6ff"};border-left:3px solid #3b82f6;font-size:12px;color:${isDark ? "#93c5fd" : "#1e40af"};line-height:1.6">
             <b>💡 Giải thích:</b> ${escHtml(correctOpt.explanation)}
           </div>`
         : "";
 
       html += `
-        <div style="border:1.5px solid ${borderClr};border-radius:14px;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:visible">
+        <div style="border:1.5px solid ${borderClr};border-radius:14px;background:${cardBg};box-shadow:0 1px 6px rgba(0,0,0,.07);overflow:visible">
           <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px 12px;background:${hdrBg};border-bottom:1px solid ${borderClr};border-radius:13px 13px 0 0">
             <span style="flex-shrink:0;min-width:28px;height:28px;border-radius:8px;background:${numBg};color:${numClr};font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${String(idx+1).padStart(2,"0")}</span>
-            <span style="font-size:14px;font-weight:700;color:#0f172a;line-height:1.5;padding-top:3px">${escHtml(q.question)}</span>
+            <span style="font-size:14px;font-weight:700;color:${txtClr};line-height:1.5;padding-top:3px">${escHtml(q.question)}</span>
           </div>
           <div style="padding:14px 16px 10px">
             ${optsHtml}

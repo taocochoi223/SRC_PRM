@@ -42,6 +42,8 @@ body.dark-mode {
   --background: #0c1d2b;
   --line: #294155;
   --blue-light: #173c58;
+  --success-bg: #063c2c;
+  --danger-bg: #3f1517;
   background: var(--background);
 }
 body.dark-mode .home-header,
