@@ -469,7 +469,7 @@
       padding: "20px 24px 24px"
     });
 
-    // Build DOM trực tiếp với inline styles để đảm bảo luôn hiển thị
+    // Build DOM dạng accordion - mặc định mở tất cả, click để đóng/mở
     elBody.innerHTML = "";
     batchIds.forEach((id, idx) => {
       const q = qMap.get(id);
@@ -477,111 +477,123 @@
       const correctOpt = q.options.find(o => o.key === q.correctAnswer);
       const wasWrong   = wrongIds.includes(id);
 
-      // Wrapper card
+      /* ── Card wrapper ── */
       const card = document.createElement("div");
-      card.className = "br-item" + (wasWrong ? " was-wrong" : "");
       Object.assign(card.style, {
-        background: "var(--background, #f4f7fb)",
-        border: "1px solid var(--line, #dde5ef)",
-        borderRadius: "16px",
+        border: wasWrong ? "1px solid #fca5a5" : "1px solid #dde5ef",
+        borderRadius: "14px",
         overflow: "hidden",
-        marginBottom: "0"
+        background: "#fff",
+        boxShadow: "0 1px 4px rgba(0,0,0,.06)"
       });
 
-      // Header (số + câu hỏi)
+      /* ── Header (click để toggle) ── */
       const header = document.createElement("div");
-      header.className = "br-item-header";
       Object.assign(header.style, {
-        display: "flex", alignItems: "flex-start", gap: "14px", padding: "18px 20px 14px"
+        display: "flex", alignItems: "flex-start", gap: "12px",
+        padding: "14px 16px", cursor: "pointer", userSelect: "none",
+        background: wasWrong ? "#fff5f5" : "#f4f7fb"
       });
 
       const numBadge = document.createElement("span");
-      numBadge.className = "br-num";
       numBadge.textContent = String(idx + 1).padStart(2, "0");
       Object.assign(numBadge.style, {
-        flexShrink: "0", width: "32px", height: "32px", borderRadius: "9px",
-        background: wasWrong ? "#fee2e2" : "var(--blue-light, #dbeafe)",
-        color: wasWrong ? "var(--danger, #ef4444)" : "var(--blue, #02569b)",
+        flexShrink: "0", width: "28px", height: "28px", borderRadius: "8px",
+        background: wasWrong ? "#fee2e2" : "#dbeafe",
+        color: wasWrong ? "#ef4444" : "#02569b",
         fontSize: "11px", fontWeight: "800",
         display: "flex", alignItems: "center", justifyContent: "center"
       });
 
-      const qText = document.createElement("p");
-      qText.className = "br-question";
+      const qText = document.createElement("span");
       qText.textContent = q.question;
       Object.assign(qText.style, {
-        fontSize: "14px", fontWeight: "700", lineHeight: "1.55",
-        flex: "1", margin: "0", paddingTop: "5px",
-        color: "var(--ink, #0d1f35)"
+        flex: "1", fontSize: "13px", fontWeight: "700",
+        lineHeight: "1.5", color: "#0d1f35", paddingTop: "4px"
+      });
+
+      const chevron = document.createElement("span");
+      chevron.textContent = "▲";
+      Object.assign(chevron.style, {
+        fontSize: "10px", color: "#6b8099", flexShrink: "0",
+        marginTop: "6px", transition: "transform .25s ease"
       });
 
       header.appendChild(numBadge);
       header.appendChild(qText);
+      header.appendChild(chevron);
       card.appendChild(header);
 
-      // Options grid
+      /* ── Body (đáp án + giải thích) ── */
+      const body = document.createElement("div");
+      Object.assign(body.style, {
+        overflow: "hidden",
+        maxHeight: "600px",  // expanded
+        transition: "max-height .3s ease, opacity .25s ease",
+        opacity: "1"
+      });
+
+      /* Options grid */
       const optGrid = document.createElement("div");
-      optGrid.className = "br-options";
       Object.assign(optGrid.style, {
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: "8px",
-        padding: "0 20px 16px"
+        display: "grid", gridTemplateColumns: "1fr 1fr",
+        gap: "8px", padding: "12px 16px 8px"
       });
 
       q.options.forEach(opt => {
         const isCorrect = opt.key === q.correctAnswer;
         const optEl = document.createElement("div");
-        optEl.className = "br-option" + (isCorrect ? " is-correct" : "");
         Object.assign(optEl.style, {
-          display: "flex", alignItems: "center", gap: "10px",
-          padding: "12px 14px", borderRadius: "10px",
-          border: isCorrect ? "1.5px solid var(--success, #10b981)" : "1.5px solid var(--line, #dde5ef)",
-          background: isCorrect ? "var(--success-bg, #d1fae5)" : "#fff",
-          fontSize: "13px", fontWeight: isCorrect ? "600" : "500",
-          color: isCorrect ? "#08774e" : "var(--ink, #0d1f35)",
-          lineHeight: "1.45", boxSizing: "border-box"
+          display: "flex", alignItems: "center", gap: "8px",
+          padding: "10px 12px", borderRadius: "10px",
+          border: isCorrect ? "1.5px solid #10b981" : "1.5px solid #dde5ef",
+          background: isCorrect ? "#d1fae5" : "#f9fafb",
+          fontSize: "13px", fontWeight: isCorrect ? "700" : "500",
+          color: isCorrect ? "#065f46" : "#374151",
+          lineHeight: "1.4"
         });
 
         const keyBadge = document.createElement("span");
-        keyBadge.className = "br-key";
         keyBadge.textContent = opt.key;
         Object.assign(keyBadge.style, {
-          flexShrink: "0", width: "26px", height: "26px", borderRadius: "7px",
-          background: isCorrect ? "var(--success, #10b981)" : "var(--background, #f4f7fb)",
-          color: isCorrect ? "#fff" : "var(--muted, #6b8099)",
+          flexShrink: "0", width: "24px", height: "24px", borderRadius: "6px",
+          background: isCorrect ? "#10b981" : "#e5e7eb",
+          color: isCorrect ? "#fff" : "#6b7280",
           fontSize: "10px", fontWeight: "800",
           display: "flex", alignItems: "center", justifyContent: "center"
         });
 
         const optText = document.createElement("span");
-        optText.textContent = opt.text;
-        if (isCorrect) {
-          const tick = document.createElement("strong");
-          tick.textContent = " ✓";
-          optText.appendChild(tick);
-        }
-
+        optText.textContent = opt.text + (isCorrect ? " ✓" : "");
         optEl.appendChild(keyBadge);
         optEl.appendChild(optText);
         optGrid.appendChild(optEl);
       });
-      card.appendChild(optGrid);
+      body.appendChild(optGrid);
 
-      // Giải thích
+      /* Explanation */
       if (correctOpt && correctOpt.explanation) {
         const expEl = document.createElement("div");
-        expEl.className = "br-explanation";
         Object.assign(expEl.style, {
-          margin: "0 20px 18px", padding: "12px 16px", borderRadius: "10px",
-          background: "#eef4fb", borderLeft: "3px solid var(--blue, #02569b)",
-          fontSize: "12px", color: "#2c5f8a", lineHeight: "1.6"
+          margin: "4px 16px 12px", padding: "10px 14px", borderRadius: "8px",
+          background: "#eff6ff", borderLeft: "3px solid #3b82f6",
+          fontSize: "12px", color: "#1e40af", lineHeight: "1.6"
         });
-        expEl.innerHTML = "<strong>Giải thích:</strong> " + escHtml(correctOpt.explanation);
-        card.appendChild(expEl);
+        expEl.innerHTML = "<strong>💡 Giải thích:</strong> " + escHtml(correctOpt.explanation);
+        body.appendChild(expEl);
       }
 
+      card.appendChild(body);
       elBody.appendChild(card);
+
+      /* Toggle accordion khi click header */
+      let expanded = true;
+      header.addEventListener("click", () => {
+        expanded = !expanded;
+        body.style.maxHeight  = expanded ? "600px" : "0px";
+        body.style.opacity    = expanded ? "1" : "0";
+        chevron.style.transform = expanded ? "rotate(0deg)" : "rotate(180deg)";
+      });
     });
 
     // Hiện modal (dùng class thay vì hidden để không override display:flex)
