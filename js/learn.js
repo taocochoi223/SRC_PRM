@@ -80,6 +80,13 @@
   /* ── CONFIG BATCH ── */
   const BATCH_SIZE = 7; // Học theo chặng 7 câu giống Quizlet
 
+  /* ── SOUND TOGGLE ── */
+  const SOUND_KEY = "prmLearnSound";
+  let soundOn = localStorage.getItem(SOUND_KEY) !== "off";
+
+  // Wrapper — chỉ phát khi soundOn = true
+  const sound = (fn) => { if (soundOn) fn(); };
+
   /* ── STATE ── */
   let queue        = []; // danh sách id câu hỏi trong chặng hiện tại (tối đa 7 câu)
   let pendingIds   = []; // các id chưa vào chặng học
@@ -327,7 +334,7 @@
 
     if (isCorrect) {
       correct++;
-      playCorrect();
+      sound(playCorrect);
       haptic([30]);          // Rung nhẹ 1 lần — đúng
       btn.classList.add("correct");
       btn.setAttribute("aria-pressed", "true");
@@ -344,7 +351,7 @@
 
     } else {
       wrong++;
-      playWrong();
+      sound(playWrong);
       haptic([50, 30, 50]);  // Rung 2 lần — sai
       const id = queue[qIndex];
       if (!wrongIds.includes(id)) wrongIds.push(id);
@@ -606,6 +613,24 @@
       }, 230);
     }
   });
+
+  // Nút tắt/bật tiếng
+  const btnSound = document.querySelector("#btn-sound");
+  const updateSoundBtn = () => {
+    if (!btnSound) return;
+    btnSound.textContent = soundOn ? "🔊" : "🔇";
+    btnSound.title = soundOn ? "Tắt tiếng" : "Bật tiếng";
+    btnSound.setAttribute("aria-label", soundOn ? "Tắt tiếng" : "Bật tiếng");
+    btnSound.classList.toggle("sound-off", !soundOn);
+  };
+  btnSound?.addEventListener("click", () => {
+    soundOn = !soundOn;
+    localStorage.setItem(SOUND_KEY, soundOn ? "on" : "off");
+    updateSoundBtn();
+    // Preview âm thanh khi bật lại
+    if (soundOn) sound(playCorrect);
+  });
+  updateSoundBtn();
 
   /* ── UTIL ── */
   function escHtml(str) {
