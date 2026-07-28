@@ -37,13 +37,17 @@ body {
 html, body { overflow-x: hidden; max-width: 100vw; }
 body.dark-mode {
   --ink: #edf6ff;
-  --muted: #a8b8c8;
+  --muted: #b0c4de;
   --surface: #13283a;
   --background: #0c1d2b;
   --line: #294155;
-  --blue-light: #173c58;
-  --success-bg: #063c2c;
-  --danger-bg: #3f1517;
+  --blue: #38bdf8;
+  --blue-dark: #7dd3fc;
+  --blue-light: rgba(56, 189, 248, 0.16);
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.15);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.15);
   background: var(--background);
 }
 body.dark-mode .home-header,
