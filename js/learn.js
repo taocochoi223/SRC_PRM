@@ -453,7 +453,19 @@
     elTitle.textContent = `Ôn tập Chặng ${batchRound}`;
     elSub.textContent   = `Đã hoàn thành ${batchIds.length} câu — Xem lại đáp án đúng và giải thích`;
 
-    // Build DOM trực tiếp để đảm bảo luôn hiển thị đúng
+    // Đảm bảo body scroll đúng trong flex (min-height:0 là bắt buộc cho flex child)
+    Object.assign(elBody.style, {
+      flex: "1",
+      minHeight: "0",
+      overflowY: "auto",
+      WebkitOverflowScrolling: "touch",
+      display: "flex",
+      flexDirection: "column",
+      gap: "20px",
+      padding: "20px 24px 24px"
+    });
+
+    // Build DOM trực tiếp với inline styles để đảm bảo luôn hiển thị
     elBody.innerHTML = "";
     batchIds.forEach((id, idx) => {
       const q = qMap.get(id);
@@ -464,18 +476,40 @@
       // Wrapper card
       const card = document.createElement("div");
       card.className = "br-item" + (wasWrong ? " was-wrong" : "");
+      Object.assign(card.style, {
+        background: "var(--background, #f4f7fb)",
+        border: "1px solid var(--line, #dde5ef)",
+        borderRadius: "16px",
+        overflow: "hidden",
+        marginBottom: "0"
+      });
 
       // Header (số + câu hỏi)
       const header = document.createElement("div");
       header.className = "br-item-header";
+      Object.assign(header.style, {
+        display: "flex", alignItems: "flex-start", gap: "14px", padding: "18px 20px 14px"
+      });
 
       const numBadge = document.createElement("span");
       numBadge.className = "br-num";
       numBadge.textContent = String(idx + 1).padStart(2, "0");
+      Object.assign(numBadge.style, {
+        flexShrink: "0", width: "32px", height: "32px", borderRadius: "9px",
+        background: wasWrong ? "#fee2e2" : "var(--blue-light, #dbeafe)",
+        color: wasWrong ? "var(--danger, #ef4444)" : "var(--blue, #02569b)",
+        fontSize: "11px", fontWeight: "800",
+        display: "flex", alignItems: "center", justifyContent: "center"
+      });
 
       const qText = document.createElement("p");
       qText.className = "br-question";
       qText.textContent = q.question;
+      Object.assign(qText.style, {
+        fontSize: "14px", fontWeight: "700", lineHeight: "1.55",
+        flex: "1", margin: "0", paddingTop: "5px",
+        color: "var(--ink, #0d1f35)"
+      });
 
       header.appendChild(numBadge);
       header.appendChild(qText);
@@ -484,19 +518,40 @@
       // Options grid
       const optGrid = document.createElement("div");
       optGrid.className = "br-options";
+      Object.assign(optGrid.style, {
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "8px",
+        padding: "0 20px 16px"
+      });
 
       q.options.forEach(opt => {
         const isCorrect = opt.key === q.correctAnswer;
         const optEl = document.createElement("div");
         optEl.className = "br-option" + (isCorrect ? " is-correct" : "");
+        Object.assign(optEl.style, {
+          display: "flex", alignItems: "center", gap: "10px",
+          padding: "12px 14px", borderRadius: "10px",
+          border: isCorrect ? "1.5px solid var(--success, #10b981)" : "1.5px solid var(--line, #dde5ef)",
+          background: isCorrect ? "var(--success-bg, #d1fae5)" : "#fff",
+          fontSize: "13px", fontWeight: isCorrect ? "600" : "500",
+          color: isCorrect ? "#08774e" : "var(--ink, #0d1f35)",
+          lineHeight: "1.45", boxSizing: "border-box"
+        });
 
         const keyBadge = document.createElement("span");
         keyBadge.className = "br-key";
         keyBadge.textContent = opt.key;
+        Object.assign(keyBadge.style, {
+          flexShrink: "0", width: "26px", height: "26px", borderRadius: "7px",
+          background: isCorrect ? "var(--success, #10b981)" : "var(--background, #f4f7fb)",
+          color: isCorrect ? "#fff" : "var(--muted, #6b8099)",
+          fontSize: "10px", fontWeight: "800",
+          display: "flex", alignItems: "center", justifyContent: "center"
+        });
 
         const optText = document.createElement("span");
         optText.textContent = opt.text;
-
         if (isCorrect) {
           const tick = document.createElement("strong");
           tick.textContent = " ✓";
@@ -509,10 +564,15 @@
       });
       card.appendChild(optGrid);
 
-      // Giải thích (nếu có)
+      // Giải thích
       if (correctOpt && correctOpt.explanation) {
         const expEl = document.createElement("div");
         expEl.className = "br-explanation";
+        Object.assign(expEl.style, {
+          margin: "0 20px 18px", padding: "12px 16px", borderRadius: "10px",
+          background: "#eef4fb", borderLeft: "3px solid var(--blue, #02569b)",
+          fontSize: "12px", color: "#2c5f8a", lineHeight: "1.6"
+        });
         expEl.innerHTML = "<strong>Giải thích:</strong> " + escHtml(correctOpt.explanation);
         card.appendChild(expEl);
       }

@@ -703,7 +703,9 @@ body.dark-mode .batch-review-panel {
 /* Scrollable body */
 .batch-review-body {
   flex: 1;
+  min-height: 0;          /* ← quan trọng: cho phép flex child co lại để scroll */
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 20px 28px 24px;
   display: flex;
   flex-direction: column;
